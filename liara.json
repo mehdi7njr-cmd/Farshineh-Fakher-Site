@@ -1,0 +1,18 @@
+{
+  "platform": "django",
+  "app": "farshine-fakher",
+  "django": {
+    "pythonVersion": "3.11"
+  },
+  "port": 8000,
+  "disks": [
+    {
+      "name": "data",
+      "mountTo": "data"
+    },
+    {
+      "name": "media",
+      "mountTo": "media"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}ورود / ثبت‌نام | فرشینه فاخر{% endblock %}
+
+{% block content %}
+<div class="container mt-40" style="max-width: 400px; margin: 50px auto; text-align: center;">
+    <h2 style="color: var(--color-accent-gold); margin-bottom: 10px;">ورود / ثبت‌نام</h2>
+    <p style="margin-bottom: 30px; color: var(--text-med-emp);">برای ورود یا ثبت‌نام، شماره موبایل خود را وارد کنید.</p>
+    
+    <form action="{% url 'shop:login' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="phone" placeholder="شماره موبایل" 
+               required pattern="09[0-9]{9}" 
+               style="width: 100%; padding: 15px; background-color: #242424; border: 1px solid var(--border-color); color: white; border-radius: 8px; margin-bottom: 20px; font-size: 16px; text-align: center;">
+               
+        <button type="submit" style="width: 100%; padding: 15px; background-color: var(--color-accent-gold); color: black; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">
+            دریافت کد تایید
+        </button>
+    </form>
+</div>
+{% endblock %}

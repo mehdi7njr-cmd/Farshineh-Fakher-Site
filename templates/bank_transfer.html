@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}پرداخت بانکی | فرشینه فاخر{% endblock %}
+
+{% block content %}
+<div class="container mt-40" style="margin-bottom: 50px; text-align: center; max-width: 600px;">
+    
+    <div style="background-color: #1a1a1a; padding: 40px; border-radius: 12px; border: 1px solid var(--color-accent-gold);">
+        <i class="fa-solid fa-building-columns" style="font-size: 60px; color: var(--color-accent-gold); margin-bottom: 20px;"></i>
+        <h2 style="color: white; margin-bottom: 10px;">سفارش شما با موفقیت ثبت شد</h2>
+        <p style="color: var(--text-med-emp); font-size: 14px; margin-bottom: 30px; line-height: 1.8;">
+            مشتری گرامی، با توجه به قوانین بانک مرکزی، سقف پرداخت آنلاین از طریق درگاه ۱۰ میلیون تومان می‌باشد. <br>
+            برای نهایی شدن سفارش، لطفاً مبلغ فاکتور را به حساب زیر واریز نمایید.
+        </p>
+
+        <div style="background: #242424; padding: 20px; border-radius: 8px; text-align: right; margin-bottom: 30px; border: 1px dashed var(--color-accent-gold);">
+            <p style="color: var(--text-high-emp); margin-bottom: 15px;">مبلغ قابل پرداخت: <strong style="color: var(--color-accent-gold); font-size: 20px; float: left;">{{ order.get_total_cost_formatted }} تومان</strong><div style="clear: both;"></div></p>
+            
+            <p style="color: var(--text-high-emp); margin-bottom: 10px;">شماره کارت:</p>
+            <div style="background: #111; padding: 10px; border-radius: 6px; text-align: center; font-size: 22px; letter-spacing: 3px; color: white; margin-bottom: 15px; font-family: monospace;">
+                5029-0810-8760-0629
+            </div>
+            
+            <p style="color: var(--text-high-emp); margin-bottom: 10px;">شماره شبا:</p>
+            <div style="background: #111; padding: 10px; border-radius: 6px; text-align: center; font-size: 16px; color: white; margin-bottom: 15px; font-family: monospace;" dir="ltr">
+                IR 330220142103028369723001
+            </div>
+            
+            <p style="color: var(--text-med-emp); font-size: 14px; text-align: center;">به نام: <strong style="color: white;">مهدی نجاریان نیاسر</strong></p>
+        </div>
+
+        <p style="color: white; margin-bottom: 15px;">پس از واریز وجه، رسید خود را به همراه شماره سفارش به یکی از پیام‌رسان‌های زیر ارسال کنید:</p>        
+        <p style="font-size: 18px; margin-bottom: 20px;">شماره سفارش شما: <strong style="color: #ff4d4d; letter-spacing: 2px;">#{{ order.id }}</strong></p>
+        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <a href="https://wa.me/989390822332?text=سلام،%20من%20سفارش%20شماره%20{{ order.id }}%20را%20به%20مبلغ%20{{ order.get_total_cost_formatted }}%20تومان%20واریز%20کردم.%20(فیش%20پیوست%20می‌شود)" 
+            target="_blank" 
+            style="background-color: #25d366; color: white; padding: 12px 25px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 15px; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> ارسال در واتساپ
+        </a>
+        <a href="https://rubika.ir/minasayadi"
+            target="_blank" 
+            style="background: linear-gradient(45deg, #D1007A, #FF7A00); color: white; padding: 12px 25px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 15px; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-paper-plane" style="font-size: 18px;"></i> ارسال در روبیکا
+        </a>
+    </div>
+</div>
+{% endblock %}

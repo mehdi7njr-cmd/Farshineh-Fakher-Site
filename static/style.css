@@ -1,0 +1,1410 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap');
+
+:root {
+    /* رنگ‌های اصلی */
+    --bg-dark-main: #121212;       
+    --bg-dark-header: #1c1c1c;     
+    --color-primary-red: #58111a;
+    --color-accent-gold: #e6b800;  
+    
+    /* سیستم رنگ متن برای خوانایی بهتر */
+    --text-pure-white: #ffffff;    
+    --text-high-emp: #f0f0f1;      
+    --text-med-emp: #a1a3a8;       
+    --text-low-emp: #76777a;       
+    
+    /* رنگ خطوط جداکننده */
+    --border-color: #2b2b2b;       
+}
+/* ================= اسکرول‌بار اختصاصی و رنگ انتخاب متن ================= */
+html { scroll-behavior: smooth; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-dark-main); border-left: 1px solid var(--border-color); }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-accent-gold); }
+
+/* وقتی کاربر متنی رو کپی/سلکت میکنه، پس‌زمینه طلایی بشه */
+::selection { background-color: var(--color-accent-gold); color: #000; }
+::-moz-selection { background-color: var(--color-accent-gold); color: #000; }
+
+/* ========================================================
+   ۲. تنظیمات پایه و ریست (Base Reset)
+======================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+    font-size: 14px; 
+    font-weight: 400;
+    background-color: var(--bg-dark-main);
+    color: var(--text-high-emp); 
+    line-height: 1.8; 
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-pure-white);
+    line-height: 1.5;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+h1 { font-size: 22px; }
+h2 { font-size: 18px; }
+h3 { font-size: 16px; }
+
+a {
+    color: var(--text-high-emp);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-accent-gold);
+}
+
+.container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.mt-40 {
+    margin-top: 40px;
+}
+
+/* ========================================================
+   ۳. سیستم پیام‌های پاپ‌آپ (Toasts)
+======================================================== */
+.toast-container {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.toast-message {
+    min-width: 250px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    animation: slideInRight 0.4s ease forwards;
+    transition: opacity 0.5s ease;
+}
+
+.toast-message i { font-size: 20px; }
+.toast-message.success { background-color: #2e7d32; border-right: 5px solid #1b5e20; }
+.toast-message.error { background-color: #d32f2f; border-right: 5px solid #b71c1c; }
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ========================================================
+   ۴. هدر اصلی و نوار اعلان
+======================================================== */
+.main-header {
+    background-color: var(--bg-dark-main);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.top-notification-bar {
+    background-color: var(--color-accent-gold);
+    color: #121212;
+    text-align: center;
+    padding: 10px 15px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.header-content {
+    padding: 20px 0;
+}
+
+.header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+}
+
+.logo a {
+    display: flex; 
+    align-items: center;
+    text-decoration: none;
+    font-size: 32px; 
+    font-weight: 900;
+    letter-spacing: -1px;
+    
+    /* طیف نوری جدید: بسیار روشن‌تر، درخشان‌تر با رفلکس نور سفید در مرکز */
+    background: linear-gradient(to right, #FFD700, #FFF3A1, #FFFFFF, #FFF3A1, #E6B800);
+    background-size: 200% auto;
+    
+    /* اعمال رنگ فقط روی حروف متن */
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* هاله نور طلایی (Glow) بسیار ظریف برای درخشش در پس‌زمینه مشکی */
+    filter: drop-shadow(0px 4px 15px rgba(255, 215, 0, 0.3));
+    
+    transition: background-position 0.5s ease;
+}
+
+.logo a:hover {
+    background-position: right center; 
+}
+
+/* ================= استایل اختصاصی عکس لوگو ================= */
+.site-logo-img {
+    width: 50px;
+    height: auto;
+    margin-left: 10px; /* فاصله دقیق و استاندارد بین عکس و نوشته */
+    border-radius: 8px; /* اگر عکست پس‌زمینه داره، گوشه‌هاش رو نرم میکنه */
+    
+    /* این خطوط باعث میشه عکس از قانونِ "رنگِ متنِ طلایی" مستثنی بشه و رنگ واقعی خودش رو نشون بده */
+    -webkit-text-fill-color: initial;
+    filter: none;
+}
+
+.search-box {
+    flex-grow: 1;
+    max-width: 600px;
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 15px 12px 50px;
+    color: var(--text-high-emp);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-box input:focus {
+    border-color: var(--color-accent-gold);
+}
+
+.search-box button {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-med-emp);
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.search-box button:hover {
+    color: var(--color-accent-gold);
+}
+
+/* دکمه‌های ورود و سبد خرید */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-login {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border-color);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.btn-login:hover {
+    border-color: var(--color-accent-gold);
+    color: var(--color-accent-gold);
+}
+
+.cart-icon {
+    position: relative;
+    color: var(--text-high-emp);
+    font-size: 22px;
+}
+
+.cart-icon:hover {
+    color: var(--color-accent-gold);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: var(--color-primary-red);
+    color: white;
+    font-size: 11px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+/* ========================================================
+   ۵. نوار منو و مگامنو
+======================================================== */
+.bottom-nav {
+    background-color: #181818;
+    border-bottom: 2px solid var(--color-accent-gold);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 20px;
+    position: relative;
+}
+
+.nav-links > li > a {
+    display: block;
+    padding: 15px 0;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--text-med-emp) !important;
+}
+
+.nav-links > li > a:hover {
+    color: var(--text-pure-white) !important;
+}
+
+.category-btn {
+    background-color: var(--color-primary-red);
+    padding: 10px 20px !important;
+    border-radius: 8px 8px 0 0;
+    color: white !important;
+    font-weight: bold !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* مگامنو */
+.mega-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    background-color: #1a1a1a;
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    min-height: 350px;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.mega-menu-wrapper:hover .mega-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.mega-sidebar {
+    width: 150px;
+    border-left: 1px solid var(--border-color);
+    padding: 20px 0;
+}
+
+.mega-sidebar ul { list-style: none; }
+.mega-sidebar li a { display: block; padding: 10px 20px; color: var(--text-med-emp); }
+.mega-sidebar li.active a { color: var(--text-pure-white); border-right: 3px solid var(--color-accent-gold); background-color: rgba(230,184,0,0.05); }
+
+.mega-content {
+    flex-grow: 1;
+    padding: 20px 30px;
+}
+/* تب‌های مگامنو */
+.mega-content { position: relative; width: 100%; }
+.mega-content-pane { display: none; animation: fadeIn 0.3s ease; }
+.mega-content-pane.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: var(--color-accent-gold);
+}
+
+.mega-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.mega-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mega-title {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--text-pure-white) !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mega-title i { color: var(--color-primary-red); font-size: 10px; }
+.mega-title:hover { color: var(--color-accent-gold) !important; }
+
+/* ========================================================
+   ۶. اسلایدرها و کارت محصولات
+======================================================== */
+/* هدر مینیمال اسلایدرها */
+.section-header-minimal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px 20px 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-title-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* خط طلاییِ لوکس کنار اسم دسته‌بندی */
+.gold-line {
+    width: 6px;
+    height: 25px;
+    background: linear-gradient(180deg, #e6b800 0%, #aa771c 100%);
+    border-radius: 4px;
+}
+
+.header-title-box h2 {
+    font-size: 20px;
+    color: var(--text-pure-white);
+    letter-spacing: -0.5px;
+}
+
+.view-all-minimal {
+    color: var(--text-med-emp);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.3s;
+}
+
+.view-all-minimal:hover {
+    color: var(--color-accent-gold);
+}
+
+.section-body-minimal {
+    padding: 20px 0;
+}
+
+/* دکمه‌های روی اسلایدر */
+.custom-swiper-btn-minimal {
+    background-color: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(5px); /* افکت شیشه‌ای محو */
+    color: var(--text-pure-white) !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+}
+.custom-swiper-btn-minimal:hover {
+    background-color: var(--color-accent-gold);
+    color: #000 !important;
+    border-color: var(--color-accent-gold);
+    transform: scale(1.1);
+}
+.custom-swiper-btn-minimal::after { font-size: 16px !important; font-weight: 900; }
+
+/* ================= کارت محصول (با افکت Hover سه‌بعدی) ================= */
+.product-card-minimal {
+    background-color: transparent; 
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 12px;
+    border: 1px solid transparent; /* حاشیه نامرئی پایه */
+    /* اینجا جادوی روان بودن انیمیشن اتفاق میفته (0.4 ثانیه و افکت ease) */
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease, background-color 0.4s ease; 
+    cursor: pointer; /* موس به حالت دست درمیاد */
+}
+
+/* جادوی Hover: کارت معلق میشه و میاد بالا! */
+.product-card-minimal:hover {
+    background-color: #1a1a1a; 
+    transform: translateY(-8px); /* کارت ۸ پیکسل میره بالا */
+    border: 1px solid rgba(230, 184, 0, 0.3); /* یه قاب طلایی ظریف دورش روشن میشه */
+    /* سایه محو و طلایی زیر کارت میفته */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8), 0 5px 25px rgba(230, 184, 0, 0.15); 
+}
+
+/* باکس عکس محصول */
+.product-img-minimal {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden; /* نمیذاره عکس موقع زوم شدن از کادر بزنه بیرون */
+    margin-bottom: 15px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #151515;
+}
+
+.product-img-minimal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* زوم شدن نرم و سینمایی */
+}
+
+/* وقتی رو کارت هاور میشه، عکس هم آروم زوم میشه جلو */
+.product-card-minimal:hover .product-img-minimal img {
+    transform: scale(1.1); /* ۱۰ درصد زوم میشه */
+}
+
+/* مارک طلاییِ کد محصول */
+.product-code-minimal {
+    position: absolute;
+    bottom: 10px; /* آوردیمش پایین عکس که زیباتر باشه */
+    left: 10px;
+    background: linear-gradient(to right, #242424, #1a1a1a);
+    color: var(--color-accent-gold);
+    border: 1px solid rgba(230, 184, 0, 0.3);
+    font-weight: bold;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    backdrop-filter: blur(4px);
+    z-index: 2; /* همیشه روی عکس میمونه */
+    transition: 0.3s;
+}
+
+/* با رفتن موس رو کارت، مارک کد محصول هم روشن‌تر میشه */
+.product-card-minimal:hover .product-code-minimal {
+    background: var(--color-accent-gold);
+    color: #000;
+}
+
+.product-info-minimal {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-title-minimal {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    line-height: 1.8 !important;
+    margin-bottom: 15px;
+    height: 46px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-title-minimal a { color: var(--text-high-emp) !important; }
+.product-card-minimal:hover .product-title-minimal a { color: var(--text-pure-white) !important; }
+
+/* قیمت‌ها */
+.product-price-minimal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: auto;
+}
+
+/* مارک قرمز تخفیف */
+.discount {
+    background-color: var(--color-primary-red);
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.old-price-box { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+.old-price-box del { color: var(--text-low-emp) !important; font-size: 13px !important; }
+
+.new-price-box { display: flex; align-items: baseline; gap: 5px; }
+.new-price-box .price { font-size: 18px !important; font-weight: 800 !important; letter-spacing: 0.5px; color: var(--text-pure-white); }
+.new-price-box .currency { font-size: 11px !important; color: var(--text-med-emp) !important; margin-right: 2px; }
+
+/* ========================================================
+   ۷. صفحه دسته‌بندی و نتایج جستجو (Grid)
+======================================================== */
+.products-grid {
+    display: grid;
+    /* دقیقاً 4 ستون با عرض مساوی در صفحه نمایش کامپیوتر */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 1200px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px; /* فاصله رو تو تبلت کمتر میکنیم */
+    }
+}
+
+/* موبایل‌ها (2 تا در هر ردیف اما جمع‌وجورتر) */
+@media (max-width: 576px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px; /* تو موبایل فاصله رو خیلی کم میکنیم که جا بشن */
+    }
+    
+    /* فونت‌ها رو تو موبایل ریزتر میکنیم که متن بیرون نزنه */
+    .product-title-minimal {
+        font-size: 11px !important;
+        height: 40px;
+    }
+    .new-price-box .price {
+        font-size: 15px !important;
+    }
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.page-btn {
+    background-color: #242424;
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-btn:hover { background-color: #333; }
+.page-btn.active {
+    background-color: var(--color-primary-red);
+    border-color: var(--color-primary-red);
+    color: white;
+    font-weight: bold;
+}
+
+/* ========================================================
+   ۸. صفحه جزئیات محصول (۳ ستونه)
+======================================================== */
+.breadcrumb {
+    color: var(--text-med-emp);
+    font-size: 13px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pd-main-layout {
+    display: grid;
+    grid-template-columns: 3.5fr 5fr 3.5fr;
+    gap: 30px;
+    align-items: start;
+}
+
+/* عکس */
+.pd-image-box { position: relative; border-radius: 12px; overflow: hidden; background-color: #fff; }
+.pd-image-box img { width: 100%; height: auto; display: block; }
+.pd-image-actions { position: absolute; top: 15px; right: 15px; display: flex; flex-direction: column; gap: 10px; }
+.pd-image-actions button { background: rgba(0,0,0,0.5); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+.pd-image-actions button:hover { background: var(--color-primary-red); }
+
+/* اطلاعات وسط */
+.pd-title { font-size: 20px; margin-bottom: 10px; }
+.pd-brand { color: var(--text-med-emp); font-size: 14px; margin-bottom: 30px; }
+.pd-brand a { color: var(--color-accent-gold); }
+
+/* سایزها */
+.pd-variants h3 { font-size: 16px; margin-bottom: 15px; }
+.variant-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+.variant-box { cursor: pointer; }
+.variant-box input { display: none; }
+.variant-box span { display: inline-block; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; transition: 0.3s; }
+.variant-box input:checked + span { border-color: var(--color-accent-gold); color: var(--color-accent-gold); background-color: rgba(230,184,0,0.1); }
+
+/* لیست کوتاه و جدول کامل */
+.pd-short-specs ul { list-style: none; padding-right: 20px; }
+.pd-short-specs li { color: var(--text-med-emp); font-size: 14px; margin-bottom: 12px; position: relative; }
+.pd-short-specs li::before { content: "•"; color: var(--color-accent-gold); position: absolute; right: -15px; }
+.pd-short-specs li span, .pd-short-specs li a { color: var(--text-pure-white); }
+
+.pd-full-specs { margin-top: 40px; }
+.specs-title { font-size: 18px; margin-bottom: 20px; border-bottom: 2px solid var(--color-accent-gold); padding-bottom: 10px; display: inline-block; }
+.specs-table { border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+.spec-row { display: flex; border-bottom: 1px solid var(--border-color); }
+.spec-key { flex: 1; background-color: #1a1a1a; padding: 15px; color: var(--text-med-emp); font-size: 14px; }
+.spec-value { flex: 3; background-color: #242424; padding: 15px; font-size: 14px; }
+
+/* باکس قیمت سمت چپ */
+.pd-action-sidebar { position: sticky; top: 20px; align-self: start; height: max-content; }
+.action-box { background-color: #1a1a1a; border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; }
+.delivery-time { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.delivery-time i { color: var(--color-primary-red); font-size: 18px; }
+.action-divider { height: 1px; background-color: var(--border-color); margin: 20px 0; }
+
+.action-price .old { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 5px; }
+.action-price .badge { background: var(--color-primary-red); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+.action-price .new { color: var(--text-pure-white); }
+.action-price .new .num { font-size: 26px; font-weight: bold; color: var(--color-accent-gold); }
+
+.add-to-cart-form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+.quantity-selector { display: flex; border: 1px solid var(--border-color); border-radius: 8px; width: 120px; }
+.qty-btn { background: transparent; border: none; color: white; width: 40px; height: 40px; cursor: pointer; }
+.qty-btn:hover { background: #333; }
+.quantity-selector input { width: 40px; height: 40px; background: transparent; border: none; color: white; text-align: center; }
+.btn-submit-cart { background-color: var(--color-primary-red); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+/* ========================================================
+   ۹. سبد خرید، لاگین و پروفایل کاربری
+======================================================== */
+.cart-wrapper { display: flex; gap: 30px; align-items: flex-start; }
+.cart-items { flex: 3; background-color: #1a1a1a; border-radius: 8px; overflow-x: auto; }
+.cart-summary { flex: 1; background-color: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); position: sticky; top: 20px; }
+.cart-table { width: 100%; border-collapse: collapse; text-align: right; }
+.cart-table th { background-color: #222; padding: 15px; font-size: 14px; color: var(--text-med-emp); }
+.cart-table td { padding: 15px; border-bottom: 1px solid var(--border-color); }
+.cart-product-info { display: flex; gap: 15px; }
+.cart-product-info img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; }
+.btn-checkout { display: block; background-color: #4caf50; color: white; text-align: center; padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+
+/* لاگین و ثبت‌نام */
+.auth-container { display: flex; justify-content: center; align-items: center; min-height: 50vh; margin: 50px 0; }
+.auth-box { background-color: #1a1a1a; padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border-color); }
+.auth-box input { width: 100%; padding: 15px; margin-bottom: 15px; background-color: #242424; border: 1px solid var(--border-color); color: white; border-radius: 8px; outline: none; }
+.btn-auth { width: 100%; padding: 15px; background-color: var(--color-primary-red); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; }
+
+/* پروفایل */
+.profile-wrapper { display: flex; gap: 30px; align-items: flex-start; }
+.profile-sidebar { flex: 1; background-color: #1a1a1a; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); position: sticky; top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.profile-avatar { text-align: center; padding: 40px 20px; border-bottom: 1px solid var(--border-color); background: linear-gradient(180deg, #242424 0%, #1a1a1a 100%); }
+.profile-avatar i { font-size: 70px; color: var(--color-accent-gold); margin-bottom: 15px; filter: drop-shadow(0 2px 5px rgba(230,184,0,0.3)); }
+.profile-avatar h3 { color: var(--text-pure-white); margin-bottom: 5px; font-size: 18px; }
+.profile-avatar p { color: var(--text-med-emp); font-size: 13px; }
+
+.profile-menu { list-style: none; padding: 10px 0; }
+.profile-menu li { margin: 5px 15px; }
+.profile-menu li a { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: var(--text-high-emp); text-decoration: none; font-size: 14px; font-weight: 500; border-radius: 8px; transition: all 0.3s ease; }
+.profile-menu li a i { font-size: 18px; color: var(--text-med-emp); transition: 0.3s; }
+.profile-menu li a:hover { background-color: #2a2a2a; color: var(--color-accent-gold); }
+.profile-menu li a:hover i { color: var(--color-accent-gold); }
+.profile-menu li.active a { background-color: rgba(230,184,0,0.1); color: var(--color-accent-gold); border: 1px solid rgba(230,184,0,0.2); }
+.profile-menu li.active a i { color: var(--color-accent-gold); }
+
+/* محتوای پروفایل */
+.profile-content { flex: 3; background-color: #1a1a1a; border-radius: 12px; padding: 35px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.profile-content h2 { font-size: 20px; color: var(--color-accent-gold); margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+
+
+/* ========================================================
+   ۱۰. فوتر لوکس و دکمه‌های شناور
+======================================================== */
+.main-footer {
+    background-color: #151515;
+    border-top: 5px solid var(--color-accent-gold);
+    margin-top: 80px;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+}
+
+.footer-features {
+    background-color: #111;
+    padding: 40px 0;
+    border-bottom: 1px solid #222;
+}
+
+.features-wrapper { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; }
+.feature-item { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.feature-icon { font-size: 35px; color: var(--color-accent-gold); margin-bottom: 10px; }
+
+.footer-content { display: flex; justify-content: space-between; padding: 50px 20px; flex-wrap: wrap; gap: 30px; }
+.footer-links { display: flex; flex-direction: column; gap: 15px; }
+.footer-contact { text-align: center; }
+
+.social-icons { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+.social-icons a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 2px solid var(--border-color); border-radius: 50%; color: var(--text-med-emp); font-size: 18px; transition: 0.3s; }
+.social-icons a:hover { background-color: var(--color-accent-gold); border-color: var(--color-accent-gold); color: #121212; transform: translateY(-5px); }
+
+.footer-about { padding: 0 20px 30px; text-align: justify; }
+
+/* بنرهای دایره‌ای صفحه اصلی */
+.glass-banners-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.glass-banner {
+    flex: 1; /* عرض برابر برای هر دو بنر */
+    height: 180px;
+    border-radius: 16px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* افکت بالا اومدن موقع هاور */
+.glass-banner:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}
+
+/* لایه تاریک‌کننده و بلور شیشه‌ای روی عکس */
+.glass-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(18,18,18,0.9) 0%, rgba(18,18,18,0.6) 100%);
+    backdrop-filter: blur(4px); /* عکس پشتش تار میشه */
+    z-index: 1;
+}
+
+/* محتویات روی بنر */
+.glass-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    gap: 30px;
+}
+
+/* آیکون‌های بزرگ سمت راست */
+.glass-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 35px;
+    color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* رنگ اختصاصی آیکون‌ها */
+.glass-icon.whatsapp { background: linear-gradient(135deg, #25d366, #128c7e); }
+.glass-icon.instagram { background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+/* متن‌ها */
+.glass-text h3 {
+    color: var(--text-pure-white);
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.glass-text p {
+    color: var(--text-med-emp);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.glass-id {
+    display: inline-block;
+    color: var(--color-accent-gold);
+    font-weight: bold;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+/* ================= ریسپانسیو بنرها برای موبایل ================= */
+@media (max-width: 768px) {
+    .glass-banners-wrapper {
+        flex-direction: column; /* تو موبایل میفتن زیر هم */
+        gap: 20px;
+    }
+    .glass-banner { height: auto; padding: 25px 0; }
+    .glass-content { padding: 0 20px; gap: 20px; }
+    .glass-icon { width: 50px; height: 50px; font-size: 25px; }
+    .glass-text h3 { font-size: 16px; }
+    .glass-text p { font-size: 11px; }
+    .glass-id { font-size: 13px; }
+}
+
+/* دکمه‌های شناور واتساپ و تماس */
+.floating-actions { position: fixed; bottom: 30px; left: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 999; }
+.float-btn { width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.3s; }
+.float-btn:hover { transform: scale(1.1); color: white; }
+.float-phone { background-color: #111; border: 2px solid #333; }
+.float-whatsapp { background-color: #25d366; }
+
+.hero-slider-section {
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+.hero-slide-item {
+    width: 100%;
+    height: 500px; /* ارتفاع بنر */
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-dark-main);
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* لایه تاریک روی عکس برای خوانایی متن */
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to left, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 100%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: right;
+    max-width: 600px; /* متن ها فقط تا نصف صفحه میان */
+}
+
+.hero-subtitle {
+    color: var(--color-accent-gold);
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.hero-title {
+    font-size: 40px;
+    color: var(--text-pure-white);
+    margin-bottom: 20px;
+    line-height: 1.4;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero-desc {
+    color: var(--text-high-emp);
+    font-size: 16px;
+    margin-bottom: 35px;
+    line-height: 1.8;
+}
+
+.btn-hero {
+    display: inline-block;
+    background-color: var(--color-accent-gold);
+    color: #000;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 15px;
+    transition: 0.3s;
+}
+.btn-hero:hover {
+    background-color: #fff;
+    transform: translateY(-3px);
+}
+
+/* دکمه‌های کناری هیرو بنر */
+.hero-btn-next, .hero-btn-prev {
+    color: rgba(255,255,255,0.5) !important;
+    transition: 0.3s;
+}
+.hero-btn-next:hover, .hero-btn-prev:hover {
+    color: var(--color-accent-gold) !important;
+}
+
+@media (max-width: 768px) {
+    .hero-slide-item { height: 350px; }
+    .hero-title { font-size: 24px; }
+    .hero-desc { font-size: 13px; }
+    .btn-hero { font-size: 13px; padding: 10px 20px; }
+}
+
+@media (max-width: 992px) {
+    .pd-main-layout { grid-template-columns: 1fr; }
+    .pd-action-sidebar { position: relative; top: 0; }
+    .spec-row { flex-direction: column; }
+    .cart-wrapper { flex-direction: column; }
+    .profile-wrapper { flex-direction: column; }
+}
+
+@media (max-width: 768px) {
+    /* 1. نوار بالا */
+    .top-notification-bar { font-size: 11px; padding: 8px; line-height: 1.6; }
+    .header-wrapper { flex-wrap: wrap; gap: 15px; justify-content: space-between; }
+    .logo { order: 1; }
+    .logo a { font-size: 24px; }
+    .header-actions { order: 2; gap: 10px; }
+    .btn-login { font-size: 12px; padding: 8px 10px; }
+    .btn-login i { display: none; } /* مخفی کردن آیکون برای خلوت شدن */
+    .search-box { order: 3; width: 100%; max-width: 100%; }
+    
+    /* 3. منوی سایت: خلوت کردن و بزرگ کردن دکمه دسته‌بندی */
+    .nav-links { justify-content: flex-start; padding: 0 10px; } 
+    .nav-links > li:not(.mega-menu-wrapper) { display: none; }
+    .mega-menu-wrapper { width: 100%; }
+    .category-btn { width: 100%; justify-content: flex-start; border-radius: var(--radius-sm); font-size: 16px !important; padding: 15px 20px !important; }
+    
+    .mega-menu { flex-direction: column; width: calc(100% + 40px); right: -20px; text-align: right; }
+    .mega-sidebar { width: 100%; border-left: none; border-bottom: 1px solid var(--border-color); padding: 10px 0; }
+    .mega-sidebar li a { text-align: right; padding-right: 25px; }
+    .mega-content { padding: 20px 25px; }
+    .mega-grid { grid-template-columns: 1fr; gap: 15px; }
+    .mega-col { align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+    
+    body { padding-bottom: 80px; }
+    .floating-actions { transform: scale(0.85); bottom: 90px !important; left: 10px; }
+}
+
+/* در حالت عادی (دسکتاپ) کلا مخفی است */
+.mobile-bottom-nav {
+    display: none;
+}
+
+/* تنظیمات فقط برای موبایل */
+@media (max-width: 768px) {
+    
+    /* 1. اضافه کردن فاصله به پایین کل سایت تا محتوا زیر نوار گیر نکنه */
+    body {
+        padding-bottom: 70px;
+    }
+
+    /* 2. ظاهرِ نوار پایین (افکت شیشه‌ای تاریک) */
+    .mobile-bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 65px;
+        background-color: rgba(26, 26, 26, 0.85); /* پس‌زمینه نیمه‌شفاف */
+        backdrop-filter: blur(10px); /* جادوی بلور شیشه‌ای */
+        -webkit-backdrop-filter: blur(10px); /* برای آیفون */
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 9999;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+    }
+
+    /* 3. استایل آیکون‌ها و متن دکمه‌ها */
+    .m-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        color: var(--text-med-emp);
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 500;
+        width: 25%;
+        transition: 0.3s;
+    }
+
+    .m-nav-item i {
+        font-size: 20px;
+        margin-bottom: 2px;
+    }
+
+    /* وقتی کاربر روی دکمه کلیک میکنه، طلایی میشه */
+    .m-nav-item:hover, .m-nav-item:active {
+        color: var(--color-accent-gold);
+    }
+
+    /* 4. دایره قرمزِ تعداد سبد خرید مخصوص موبایل */
+    .m-cart-item {
+        position: relative;
+    }
+    .m-cart-badge {
+        position: absolute;
+        top: -5px;
+        right: 20px;
+        background-color: var(--color-primary-red);
+        color: white;
+        font-size: 10px;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: bold;
+    }
+
+    .floating-actions {
+        bottom: 85px !important;
+    }
+}
+
+/* --- Checkout Page Styles --- */
+.form-input {
+    width: 100%; 
+    padding: 15px; 
+    background-color: #242424; 
+    border: 1px solid var(--border-color); 
+    color: white; 
+    border-radius: 8px; 
+    outline: none; 
+    font-family: inherit; 
+    font-size: 14px;
+}
+.form-input:focus { 
+    border-color: var(--color-accent-gold); 
+}
+
+.shipping-methods {
+    display: flex; 
+    background: #242424; 
+    padding: 15px; 
+    border-radius: 8px; 
+    border: 1px solid var(--border-color);
+}
+.shipping-option {
+    display: flex; 
+    align-items: center; 
+    cursor: pointer; 
+    color: white;
+}
+.shipping-option input[type="radio"] { 
+    margin-left: 8px; 
+    cursor: pointer; 
+    accent-color: var(--color-accent-gold); 
+}
+
+/* ================= طرح سایدبار فیلتر و گرید محصولات ================= */
+.shop-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.filter-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background-color: #1a1a1a;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: sticky;
+    top: 20px;
+}
+
+.shop-products-area {
+    flex-grow: 1;
+}
+
+/* هدر فیلتر */
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-header h3 { color: var(--color-accent-gold); font-size: 16px; margin: 0; }
+.clear-filters { color: #ff4d4d; font-size: 12px; text-decoration: none; }
+.clear-filters:hover { text-decoration: underline; }
+
+/* باکس هر بخش فیلتر */
+.filter-box {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+.filter-box:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.filter-title { font-size: 14px; margin-bottom: 15px; color: var(--text-pure-white); }
+
+/* چک‌باکس‌های دیجی‌کالایی */
+.checkbox-list { display: flex; flex-direction: column; gap: 10px; max-height: 200px; overflow-y: auto; }
+.custom-checkbox {
+    display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; color: var(--text-high-emp);
+}
+.custom-checkbox input { display: none; }
+.checkmark {
+    width: 18px; height: 18px; border: 2px solid var(--text-med-emp); border-radius: 4px; display: flex; justify-content: center; align-items: center; transition: 0.2s;
+}
+.custom-checkbox:hover .checkmark { border-color: var(--color-accent-gold); }
+.custom-checkbox input:checked + .checkmark { background-color: var(--color-accent-gold); border-color: var(--color-accent-gold); }
+.custom-checkbox input:checked + .checkmark::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: #000; font-size: 10px; }
+
+/* ورودی‌های قیمت */
+.price-inputs { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.price-inputs input { width: 100%; padding: 8px; background: #242424; border: 1px solid var(--border-color); color: white; border-radius: 6px; text-align: center; outline: none; }
+.price-inputs input:focus { border-color: var(--color-accent-gold); }
+.price-inputs span { color: var(--text-med-emp); font-size: 12px; }
+.btn-apply-filter { width: 100%; background: #333; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+.btn-apply-filter:hover { background: var(--color-accent-gold); color: #000; font-weight: bold; }
+
+/* ریسپانسیو سایدبار برای موبایل */
+@media (max-width: 992px) {
+    .shop-layout { flex-direction: column; }
+    .filter-sidebar { width: 100%; position: static; }
+}
+
+/* ================= استایل کلید (فقط کالاهای موجود) ================= */
+.toggle-box { display: flex; align-items: center; justify-content: space-between; }
+.toggle-switch { position: relative; display: flex; align-items: center; justify-content: space-between; width: 100%; cursor: pointer; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider.round { position: relative; width: 44px; height: 24px; background-color: #333; border-radius: 34px; transition: .4s; }
+.slider.round:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .4s; }
+input:checked + .slider.round { background-color: #4caf50; }
+input:checked + .slider.round:before { transform: translateX(20px); }
+
+/* ================= استایل نوار مرتب‌سازی (Sort Bar) ================= */
+.sort-bar {
+    display: flex;
+    align-items: center;
+    background-color: #1a1a1a;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.sort-title { color: var(--text-med-emp); font-size: 14px; display: flex; align-items: center; gap: 8px; margin-left: 20px; }
+.sort-options { display: flex; gap: 15px; }
+.sort-btn {
+    background: none; border: none; color: var(--text-high-emp); font-size: 13px; font-family: inherit; cursor: pointer; transition: 0.3s; padding: 5px 10px; border-radius: 6px;
+}
+.sort-btn:hover { color: var(--color-accent-gold); }
+.sort-btn.active { color: var(--color-accent-gold); font-weight: bold; background-color: rgba(230,184,0,0.1); }
+
+/* پنهان کردن اسکرول‌بار در نوار مرتب‌سازی برای موبایل */
+.sort-bar::-webkit-scrollbar { display: none; }
+
+/* ================= گالری تصاویر ================= */
+.gallery-thumbnails { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+.thumb-img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: 0.3s; opacity: 0.6; }
+.thumb-img:hover { opacity: 1; transform: translateY(-3px); }
+.thumb-img.active-thumb { border-color: var(--color-accent-gold); opacity: 1; }
+
+/* پنهان کردن اسکرول‌بار برای گالری */
+.gallery-thumbnails::-webkit-scrollbar { display: none; }
+
+/* ================= توضیحات و نظرات ================= */
+.desc-content { background: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); color: var(--text-high-emp); line-height: 2.2; font-size: 15px; text-align: justify; }
+
+.comment-form-box { background: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); }
+.btn-submit-comment { background: var(--color-accent-gold); color: #000; border: none; padding: 12px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+.btn-submit-comment:hover { background: #fff; }
+
+.comment-item { background: #242424; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+.comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+.comment-header i { font-size: 24px; color: var(--text-med-emp); }
+.comment-author { font-weight: bold; color: var(--text-pure-white); }
+.comment-date { color: var(--text-low-emp); font-size: 12px; margin-right: auto; }
+.comment-body { color: var(--text-med-emp); line-height: 2; font-size: 14px; }
+
+/* ================= استایل کم و زیاد کردن در سبد خرید ================= */
+.cart-qty-selector {
+    display: inline-flex;
+    align-items: center;
+    background-color: #242424;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.qty-btn-sm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+    background-color: transparent;
+    color: var(--text-pure-white);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.qty-btn-sm:hover {
+    background-color: var(--color-accent-gold);
+    color: #000;
+}
+
+.qty-number {
+    width: 35px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-pure-white);
+    font-weight: bold;
+}
+
+@media print {
+    body { background-color: #fff !important; color: #000 !important; }
+    .main-header, .main-footer, .mobile-bottom-nav, .floating-actions, .btn-print-factor { display: none !important; }
+    .cart-table th { background-color: #eee !important; color: #000 !important; }
+    .cart-table td { color: #000 !important; border-color: #ddd !important; }
+    * { background: transparent !important; color: #000 !important; box-shadow: none !important; }
+}
+
+/* ================= باکس قیمت چسبان (مخصوص موبایل) ================= */
+/* ================= باکس قیمت چسبان (مخصوص موبایل) ================= */
+@media (max-width: 992px) {
+    /* باکسی که کل ستون سمت چپ رو در بر میگیره */
+    .pd-action-sidebar {
+        position: fixed !important;
+        top: auto !important; /* این خط حیاتیه: اثر هرچیزی که میبرتش بالا رو خنثی میکنه */
+        bottom: 65px !important; /* دقیقاً بالای نوار منوی موبایل */
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: max-content !important;
+        z-index: 99999 !important; /* بالاتر از همه چیز باشه */
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* باکس مشکی رنگی که دور قیمت و دکمه است */
+    .action-box {
+        background-color: rgba(26, 26, 26, 0.95) !important; /* رنگ تیره با کمی ماتی */
+        backdrop-filter: blur(10px) !important;
+        border: none !important;
+        border-top: 2px solid var(--color-accent-gold) !important;
+        border-radius: 16px 16px 0 0 !important;
+        padding: 12px 20px !important;
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    /* مخفی کردن المان‌های اضافی */
+    .delivery-time, .action-divider, .old, .out-of-stock-msg p, .out-of-stock-msg i {
+        display: none !important;
+    }
+
+    /* استایل دکمه ناموجود */
+    .out-of-stock-msg {
+        padding: 0 !important; width: 100% !important; margin: 0 !important; text-align: center !important;
+    }
+
+    /* فرم افزودن به سبد خرید */
+    .add-to-cart-form {
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px !important;
+        justify-content: flex-end !important;
+    }
+
+    .btn-submit-cart {
+        padding: 10px 15px !important;
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+
+    /* استایل قیمت (سمت راست باکس) */
+    .action-price .new {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0 !important;
+    }
+
+    .action-price .new .num {
+        font-size: 20px !important;
+        line-height: 1 !important;
+    }
+    body {
+        padding-bottom: 150px !important;
+    }
+}
+
+/* ================= منوی دسته‌بندی (مخصوص موبایل) ================= */
+@media (max-width: 768px) {
+    /* خنثی کردن باز شدن خودکار با لمس در موبایل */
+    .mega-menu-wrapper:hover .mega-menu {
+        opacity: 0; visibility: hidden; transform: translateY(10px);
+    }
+    
+    /* کلاسی که با کلیک اضافه میشود */
+    .mega-menu.mobile-menu-active {
+        opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important;
+    }
+    
+    /* تنظیم سایز و استایل منو در موبایل */
+    .mega-menu {
+        width: 100% !important; right: 0 !important; max-height: 60vh !important;
+        overflow-y: auto !important; border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        display: flex; flex-direction: column;
+    }
+    
+    .mega-sidebar { width: 100%; border-bottom: 1px solid var(--border-color); padding: 10px 0; border-left: none; }
+    .mega-sidebar li a { text-align: right; padding-right: 25px; }
+    .mega-sidebar li a i { transform: rotate(-90deg); transition: 0.3s; }
+    .mega-sidebar li.active a i { transform: rotate(0); }
+    
+    .mega-content { padding: 20px 25px; }
+    .mega-grid { grid-template-columns: 1fr; gap: 15px; }
+    .mega-col { align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+}

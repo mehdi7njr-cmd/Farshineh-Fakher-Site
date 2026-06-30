@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}صفحه پیدا نشد | فرشینه فاخر{% endblock %}
+{% block content %}
+<div class="container" style="text-align: center; padding: 100px 0; min-height: 50vh;">
+    <h1 style="font-size: 100px; color: var(--color-accent-gold); margin-bottom: 0;">404</h1>
+    <h2 style="color: white; margin-bottom: 20px;">گره کار کجاست؟ این صفحه پیدا نشد!</h2>
+    <p style="color: var(--text-med-emp); margin-bottom: 30px;">ممکن است محصول مورد نظر شما حذف شده باشد یا آدرس را اشتباه وارد کرده باشید.</p>
+    <a href="{% url 'shop:home' %}" style="background-color: var(--color-primary-red); color: white; padding: 10px 25px; border-radius: 8px; font-weight: bold;">بازگشت به صفحه اصلی</a>
+</div>
+{% endblock %}

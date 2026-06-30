@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}پرداخت ناموفق{% endblock %}
+{% block content %}
+<div class="container" style="text-align: center; padding: 100px 0;">
+    <i class="fa-solid fa-circle-xmark" style="font-size: 80px; color: #ff4d4d; margin-bottom: 20px;"></i>
+    <h1 style="color: white; margin-bottom: 15px;">پرداخت شما ناموفق بود!</h1>
+    <p style="color: var(--color-text-gray); font-size: 18px;">سفارش شماره: <span style="color: white;">#{{ order_id }}</span> (وضعیت: پرداخت نشده)</p>
+    <p style="color: var(--color-text-gray); margin-bottom: 30px;">در صورت کسر وجه از حساب شما، مبلغ طی ۷۲ ساعت به حسابتان بازمی‌گردد.</p>
+    <p style="color: #ff4d4d; background: rgba(255,77,77,0.05); border: 1px solid rgba(255,77,77,0.2); padding: 15px; border-radius: 8px; font-size: 14px;">
+         چنانچه در فرآیند پرداخت با مشکل مواجه شدید، می‌توانید با پشتیبانی فرشینه فاخر تماس بگیرید.
+    </p>
+    <a href="{% url 'shop:cart_detail' %}" style="background-color: var(--color-primary-red); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">تلاش مجدد برای پرداخت</a>
+</div>
+{% endblock %}

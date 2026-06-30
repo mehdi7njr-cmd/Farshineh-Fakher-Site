@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{% if page_title %}{{ page_title }}{% else %}{{ category.name }}{% endif %} | فرشینه فاخر{% endblock %}
+
+{% block content %}
+<section class="category-page-header mt-40" style="margin-bottom: 50px;">
+    <div class="container">
+        
+        <h1 style="color: var(--color-text-white); border-bottom: 2px solid var(--color-accent-gold); padding-bottom: 10px; margin-bottom: 30px;">
+            {% if page_title %}{{ page_title }}{% else %}{{ category.name }}{% endif %}
+        </h1>
+
+        <div class="shop-layout">
+            
+            <!-- ================= سایدبار فیلترها ================= -->
+            <aside class="filter-sidebar">
+                <form method="GET" id="filter-form">
+                    <div class="filter-header">
+                        <h3><i class="fa-solid fa-filter"></i> فیلترها</h3>
+                        <a href="?" class="clear-filters">حذف فیلترها</a>
+                    </div>
+                    <div class="filter-box toggle-box">
+                        <label class="toggle-switch">
+                            <span class="toggle-label" style="color: var(--text-pure-white); font-weight: bold;">فقط کالاهای موجود</span>
+                            <input type="checkbox" name="in_stock" value="true" onchange="document.getElementById('filter-form').submit();" {% if request.GET.in_stock == 'true' %}checked{% endif %}>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+
+                    <!-- 1. فیلتر قیمت (نوار لغزان) -->
+                    <div class="filter-box">
+                        <h4 class="filter-title">محدوده قیمت (تومان)</h4>
+                        <div class="price-inputs">
+                            <input type="number" name="min_price" id="min_price" placeholder="از" value="{{ request.GET.min_price }}">
+                            <span>تا</span>
+                            <input type="number" name="max_price" id="max_price" placeholder="بیشترین" value="{{ request.GET.max_price }}">
+                        </div>
+                        <button type="submit" class="btn-apply-filter">اعمال قیمت</button>
+                    </div>
+
+                    <!-- 2. فیلتر برند -->
+                    {% if brands %}
+                    <div class="filter-box">
+                        <h4 class="filter-title">برندها</h4>
+                        <div class="checkbox-list">
+                            {% for brand in brands %}
+                            <label class="custom-checkbox">
+                                <input type="checkbox" name="brand" value="{{ brand.id }}" 
+                                    onchange="document.getElementById('filter-form').submit();"
+                                    {% if brand.id|stringformat:"s" in request.GET.brand %}checked{% endif %}>
+                                <span class="checkmark"></span>
+                                {{ brand.name }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- 3. فیلتر ویژگی‌های پویا (جنس، وزن و...) -->
+                    {% for key, values in features_dict.items %}
+                    <div class="filter-box">
+                        <h4 class="filter-title">{{ key }}</h4>
+                        <div class="checkbox-list">
+                            {% for val in values %}
+                            <label class="custom-checkbox">
+                                <input type="checkbox" name="f_{{ key }}" value="{{ val }}"
+                                    onchange="document.getElementById('filter-form').submit();"
+                                <span class="checkmark"></span>
+                                {{ val }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </form>
+            </aside>
+
+            <!-- ================= لیست محصولات ================= -->
+            <div class="shop-products-area">
+                    <!-- نوار مرتب‌سازی (Sort Bar) -->
+                <div class="sort-bar">
+                    <div class="sort-title"><i class="fa-solid fa-arrow-down-short-wide"></i> مرتب‌سازی:</div>
+                    <div class="sort-options">
+                        <button onclick="changeSort('newest')" class="sort-btn {% if request.GET.sort == 'newest' or not request.GET.sort %}active{% endif %}">جدیدترین</button>
+                        <button onclick="changeSort('popular')" class="sort-btn {% if request.GET.sort == 'popular' %}active{% endif %}">پربازدیدترین</button>
+                        <button onclick="changeSort('bestseller')" class="sort-btn {% if request.GET.sort == 'bestseller' %}active{% endif %}">پرفروش‌ترین</button>
+                        <button onclick="changeSort('cheapest')" class="sort-btn {% if request.GET.sort == 'cheapest' %}active{% endif %}">ارزان‌ترین</button>
+                        <button onclick="changeSort('expensive')" class="sort-btn {% if request.GET.sort == 'expensive' %}active{% endif %}">گران‌ترین</button>
+                    </div>
+                </div>
+                <div class="products-grid">
+                    {% for product in products %}
+                        <div class="product-card-minimal">
+                            <div class="product-img-minimal">
+                                <a href="{{ product.get_absolute_url }}">
+                                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                                </a>
+                                <span class="product-code-minimal">{{ product.code }}</span>
+                            </div>
+                            <div class="product-info-minimal">
+                                <h3 class="product-title-minimal">
+                                    <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                </h3>
+                                <div class="product-price-minimal">
+                                    <div class="new-price-box">
+                                        {% if product.is_available and product.first_size %}
+                                            <span class="price">{{ product.get_discounted_price_formatted }}</span>
+                                            <span class="currency">تومان</span>
+                                        {% else %}
+                                            <span class="price" style="color: #ff4d4d; font-size: 16px !important; font-weight: bold;">ناموجود</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div style="grid-column: 1/-1; text-align: center; padding: 50px 0;">
+                            <i class="fa-solid fa-filter-circle-xmark" style="font-size: 50px; color: var(--text-med-emp); margin-bottom: 20px;"></i>
+                            <h3 style="color: white;">هیچ محصولی با این فیلترها یافت نشد!</h3>
+                            <a href="?" style="display:inline-block; margin-top:15px; color:var(--color-accent-gold);">پاک کردن فیلترها</a>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- صفحه‌بندی -->
+                {% if products.has_other_pages %}
+                <div class="pagination">
+                    {% for num in products.paginator.page_range %}
+                        <button onclick="changePage({{ num }})" class="page-btn {% if products.number == num %}active{% endif %}">{{ num }}</button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+    // این کد چک‌باکس‌هایی که تو URL بودن رو تیک میزنه
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.forEach((value, key) => {
+            if (key.startsWith('f_')) {
+                let checkboxes = document.querySelectorAll(`input[name="${key}"][value="${value}"]`);
+                checkboxes.forEach(cb => cb.checked = true);
+            }
+        });
+    });
+
+    // برای صفحه‌بندی بدون پریدن فیلترها
+    function changePage(pageNum) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', pageNum);
+        window.location.href = url.href;
+    }
+        function changeSort(sortValue) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort', sortValue);
+        url.searchParams.set('page', 1); // با تغییر مرتب‌سازی، برمیگرده صفحه اول
+        window.location.href = url.href;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load jformat %}
+{% block title %}جزئیات سفارش #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-40" style="margin-bottom: 50px;">
+    
+    <div style="background-color: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid var(--border-color);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
+            <h2 style="color: var(--color-accent-gold);">فاکتور سفارش #{{ order.id }}</h2>
+            <a href="{% url 'shop:profile' %}" style="color: var(--text-med-emp); text-decoration: none;"><i class="fa-solid fa-arrow-right"></i> بازگشت</a>
+        </div>
+        
+        <div style="display: flex; gap: 40px; margin-bottom: 30px; color: var(--text-high-emp); font-size: 14px;">
+            <div><strong>تاریخ ثبت:</strong> <span style="color: var(--text-med-emp);">{{ order.created|jformat:'%Y/%m/%d' }}</span></div>
+            <div><strong>گیرنده:</strong> <span style="color: var(--text-med-emp);">{{ order.first_name }} {{ order.last_name }}</span></div>
+            <div><strong>وضعیت پرداخت:</strong> 
+                {% if order.is_paid %}<span style="color: #4caf50;">موفق</span>{% else %}<span style="color: #ff4d4d;">ناموفق</span>{% endif %}
+            </div>
+        </div>
+<button onclick="window.print()" class="btn-print-factor" style="margin-bottom: 20px; background: #333; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; float: left;"><i class="fa-solid fa-print"></i> چاپ فاکتور</button>
+<div style="clear: both;"></div>
+
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>تصویر محصول</th>
+                    <th>نام فرش</th>
+                    <th>قیمت خرید</th>
+                    <th>تعداد</th>
+                    <th>جمع ردیف</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td><img src="{{ item.product.image.url }}" style="width: 60px; border-radius: 6px;"></td>
+                    <td style="color: white;">{{ item.product.title }}</td>
+                    <!-- اینجا یه ارتقای کوچیک میخواد که تو دیتابیس قیمت رو فرمت کنیم، فعلا ساده نشون میدیم -->
+                    <td style="color: var(--text-med-emp);">{{ item.price }} تومان</td>
+                    <td>{{ item.quantity }} عدد</td>
+                    <td style="color: var(--color-accent-gold);">{% widthratio item.price 1 item.quantity %} تومان</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div style="text-align: left; margin-top: 20px; font-size: 18px; color: white;">
+            جمع کل پرداختی: <strong style="color: var(--color-accent-gold);">{{ order.get_total_cost_formatted }} تومان</strong>
+        </div>
+    </div>
+</div>
+{% endblock %}

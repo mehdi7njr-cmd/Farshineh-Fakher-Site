@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}فرشینه فاخر | فروشگاه تخصصی فرش و دکوراسیون{% endblock %}
+
+{% block content %}
+<section class="hero-slider-section">
+    <div class="swiper heroSwiper">
+        <div class="swiper-wrapper">
+
+            {% for slide in sliders %}
+            <div class="swiper-slide">
+                <div class="hero-slide-item" style="background-image: url('{{ slide.image.url }}');">
+                    <div class="hero-overlay"></div>
+                    <div class="container hero-content">
+                        
+                        {% if slide.subtitle %}
+                            <span class="hero-subtitle">{{ slide.subtitle }}</span>
+                        {% endif %}
+                        
+                        <h1 class="hero-title">{{ slide.title }}</h1>
+                        
+                        {% if slide.description %}
+                            <p class="hero-desc">{{ slide.description }}</p>
+                        {% endif %}
+                        
+                        {% if slide.button_text and slide.button_link %}
+                            <a href="{{ slide.button_link }}" class="btn-hero">{{ slide.button_text }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- اگر هنوز بنری در ادمین نساخته بودی، این اسلاید پیشفرض نمایش داده میشه -->
+            <div class="swiper-slide">
+                <div class="hero-slide-item" style="background-image: url('{% static "slide1.jpg" %}');">
+                    <div class="hero-overlay"></div>
+                    <div class="container hero-content">
+                        <span class="hero-subtitle">کالکشن جدید فرشینه فاخر</span>
+                        <h1 class="hero-title">فرشینه فاخر، اصالت در خانه شما</h1>
+                        <p class="hero-desc">تلفیق هنر مدرن و سنتی، با ضمانت کیفیت</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="swiper-button-next hero-btn-next"></div>
+        <div class="swiper-button-prev hero-btn-prev"></div>
+        <div class="swiper-pagination hero-pagination"></div>
+    </div>
+</section>    
+{% for category in categories %}
+        {% if category.products.all %}
+            <!-- دقت کن! کلاس رنگی category.theme_color کلاً حذف شد -->
+            <section class="product-section mt-40">
+                <div class="container">
+                    
+                    <!-- هدرِ اسلایدر (خط طلایی) -->
+                    <div class="section-header-minimal">
+                        <div class="header-title-box">
+                            <span class="gold-line"></span>
+                            <h2>{{ category.name }}</h2>
+                        </div>
+                        <a href="{{ category.get_absolute_url }}" class="view-all-minimal">مشاهده همه <i class="fa-solid fa-angle-left"></i></a>
+                    </div>
+
+                    <!-- بدنه اسلایدر -->
+                    <div class="section-body-minimal">
+                        <div class="swiper productSwiper">
+                            <div class="swiper-wrapper">
+                                {% for product in category.products.all %}
+                                <div class="swiper-slide">
+                                    
+                                    <!-- کارت محصول (با افکت جدید) -->
+                                    <div class="product-card-minimal">
+                                        <div class="product-img-minimal">
+                                            <a href="{{ product.get_absolute_url }}">
+                                                <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                                            </a>
+                                            <span class="product-code-minimal">{{ product.code }}</span>
+                                        </div>
+                                        
+                                        <div class="product-info-minimal">
+                                            <h3 class="product-title-minimal">
+                                                <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                            </h3>
+                                            
+                                            <div class="product-price-minimal">
+                                                {% if product.first_size and product.first_size.discount_percent > 0 %}
+                                                <div class="old-price-box">
+                                                    <span class="discount">{{ product.first_size.discount_percent }}٪</span>
+                                                    <del>{{ product.first_size.get_price_formatted }}</del>
+                                                </div>
+                                                {% endif %}
+                                                <div class="new-price-box">
+                                                    {% if product.is_available and product.first_size %}
+                                                        <span class="price">{{ product.get_discounted_price_formatted }}</span>
+                                                        <span class="currency">تومان</span>
+                                                    {% else %}
+                                                        <span class="price" style="color: #ff4d4d; font-size: 16px !important; font-weight: bold;">ناموجود</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="swiper-button-next custom-swiper-btn-minimal"></div>
+                            <div class="swiper-button-prev custom-swiper-btn-minimal"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+    {% endfor %}
+    <section class="contact-banners-section mt-40" style="margin-bottom: 50px;">
+        <div class="container">
+            <div class="glass-banners-wrapper">
+                
+                <!-- بنر واتساپ -->
+                <a href="https://wa.me/989390822332" target="_blank" class="glass-banner" 
+                   style="background-image: url('static/whatsapp-bg.jpg');">
+                    <div class="glass-overlay"></div>
+                    <div class="glass-content">
+                        <div class="glass-icon whatsapp">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <div class="glass-text">
+                            <h3>مشاوره و خرید مستقیم</h3>
+                            <p>ارتباط سریع با کارشناسان فروش در واتساپ</p>
+                            <span dir="ltr" class="glass-id">0939 082 2332</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- بنر اینستاگرام -->
+                <a href="https://instagram.com/minaa_s_s" target="_blank" class="glass-banner"
+                   style="background-image: url('static/instagram-bg.jpg');">
+                    <div class="glass-overlay"></div>
+                    <div class="glass-content">
+                        <div class="glass-icon instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                        <div class="glass-text">
+                            <h3>گالری ویدیوهای فرشینه</h3>
+                            <p>جدیدترین طرح‌ها و دکوراسیون‌ها را در اینستاگرام ببینید</p>
+                            <span dir="ltr" class="glass-id">@minasayadi</span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var heroSwiper = new Swiper(".heroSwiper", {
+        loop: true,
+        effect: "fade",
+        fadeEffect: {
+            crossFade: true
+        },
+        autoplay: {
+            delay: 4000, // هر ۴ ثانیه ورق میخوره
+            disableOnInteraction: false,
+        },
+        navigation: {
+            nextEl: ".hero-btn-next",
+            prevEl: ".hero-btn-prev",
+        },
+        pagination: {
+            el: ".hero-pagination",
+            clickable: true,
+        },
+    });
+    var swipers = document.querySelectorAll('.productSwiper');
+    swipers.forEach(function(sliderParent) {
+        var nextBtn = sliderParent.querySelector('.swiper-button-next');
+        var prevBtn = sliderParent.querySelector('.swiper-button-prev');
+        new Swiper(sliderParent, {
+            slidesPerView: 1.5, spaceBetween: 10,
+            navigation: { nextEl: nextBtn, prevEl: prevBtn },
+            breakpoints: {
+                640: { slidesPerView: 2, spaceBetween: 10 },
+                768: { slidesPerView: 4, spaceBetween: 15 },
+                1024: { slidesPerView: 6, spaceBetween: 15 },
+            },
+        });
+    });
+</script>
+{% endblock %}

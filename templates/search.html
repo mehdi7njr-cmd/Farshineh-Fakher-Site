@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}جستجو برای "{{ query }}" | فرشینه فاخر {% endblock %}
+
+{% block content %}
+
+    <section class="category-page-header mt-40">
+        <div class="container">
+            
+            <h1 style="color: var(--color-text-white); border-bottom: 2px solid var(--color-accent-gold); padding-bottom: 10px; margin-bottom: 30px;">
+                نتایج جستجو برای: <span style="color: var(--color-accent-gold);">"{{ query }}"</span>
+            </h1>
+
+            <div class="products-grid">
+                {% for product in products %}
+                    <!-- تغییر کلاس‌ها به minimal -->
+                    <div class="product-card-minimal">
+                        <div class="product-img-minimal">
+                            <a href="{{ product.get_absolute_url }}">
+                                <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                            </a>
+                            <span class="product-code-minimal">{{ product.code }}</span>
+                        </div>
+                        <div class="product-info-minimal">
+                            <h3 class="product-title-minimal">
+                                <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                            </h3>
+
+                            <div class="product-price-minimal">
+                                {% if product.first_size and product.first_size.discount_percent > 0 %}
+                                <div class="old-price-box">
+                                    <span class="discount">{{ product.first_size.discount_percent }}٪</span>
+                                    <del>{{ product.first_size.get_price_formatted }}</del>
+                                </div>
+                                {% endif %}
+                                <div class="new-price-box">
+                                    {% if product.first_size %}
+                                        <span class="price">{{ product.get_discounted_price_formatted }}</span>
+                                        <span class="currency">تومان</span>
+                                    {% else %}
+                                        <span class="price" style="color: var(--text-med-emp); font-size: 14px !important;">ناموجود</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div style="width: 100%; text-align: center; padding: 50px 0; grid-column: 1 / -1;">
+                        <i class="fa-solid fa-face-frown" style="font-size: 50px; color: var(--text-med-emp); margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--text-pure-white);">متاسفانه محصولی با این نام یا کد پیدا نشد!</h3>
+                        <p style="color: var(--text-med-emp); margin-top: 10px;">لطفاً کلمه دیگری را جستجو کنید.</p>
+                    </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+    </section>
+
+{% endblock %}

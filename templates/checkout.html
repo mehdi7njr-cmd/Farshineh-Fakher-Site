@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}تکمیل اطلاعات ارسال | فرشینه فاخر{% endblock %}
+
+{% block content %}
+<div class="container mt-40" style="margin-bottom: 50px;">
+    
+    <div class="cart-wrapper">
+        
+        <!-- سمت راست: فرم دریافت اطلاعات -->
+        <div class="cart-items" style="padding: 30px; background-color: #1a1a1a;">
+            <h2 style="color: var(--color-accent-gold); margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">اطلاعات گیرنده سفارش</h2>
+            
+            <form action="{% url 'shop:checkout' %}" method="POST" id="checkout-form">
+                {% csrf_token %}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <input type="text" name="first_name" placeholder="نام گیرنده" value="{{ user.first_name }}" required class="form-input">
+                    <input type="text" name="last_name" placeholder="نام خانوادگی" value="{{ user.last_name }}" required class="form-input">
+                    <input type="text" name="national_code" placeholder="کد ملی" value="{{ profile.national_code|default_if_none:'' }}" required pattern="[0-9]{10}" class="form-input">
+                    <input type="text" name="mobile" placeholder="شماره موبایل" value="{{ user.username }}" required pattern="09[0-9]{9}" class="form-input">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <textarea name="address" placeholder="آدرس دقیق پستی" required class="form-input" rows="3">{{ profile.address|default_if_none:'' }}</textarea>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <input type="text" name="postal_code" placeholder="کد پستی" value="{{ profile.postal_code|default_if_none:'' }}" required pattern="[0-9]{10}" class="form-input">                
+                </div>
+            </form>
+        </div>
+
+        <!-- سمت چپ: ستون فاکتور و ارسال -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+            
+            <!-- باکس جدید: اطلاعات ارسال (تیپاکس) -->
+            <div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid var(--color-accent-gold); position: sticky; top: 20px;">
+                <h3 style="color: var(--color-accent-gold); margin-bottom: 15px; font-size: 16px;">
+                    <i class="fa-solid fa-truck-fast"></i> روش ارسال
+                </h3>
+                <div style="background: #242424; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: white; display: block; font-size: 14px;">تیپاکس (سریع و مطمئن)</strong>
+                        <span style="color: var(--text-med-emp); font-size: 12px; margin-top: 5px; display: inline-block;">هزینه حمل زمان تحویل کالا درب منزل به مامور تیپاکس پرداخت می‌شود.</span>
+                    </div>
+                    <span style="color: #ff4d4d; font-weight: bold; background: rgba(255,77,77,0.1); padding: 5px 10px; border-radius: 6px; font-size: 13px;">پس‌کرایه</span>
+                </div>
+            </div>
+
+            <!-- باکس فاکتور و پرداخت -->
+            <div class="cart-summary" style="position: static;">
+                <h3>خلاصه فاکتور</h3>
+                <div class="summary-item">
+                    <span>مبلغ کالاها ({{ cart|length }} قلم):</span>
+                    <span>{{ cart.get_total_price_formatted }} تومان</span>
+                </div>
+                <div class="summary-item">
+                    <span>هزینه ارسال:</span>
+                    <span style="color: #ff4d4d; font-weight: bold;">
+                        پس‌کرایه
+                    </span>
+                </div>
+                
+                <div class="summary-divider"></div>
+                
+                <div class="summary-item total">
+                    <span>مبلغ قابل پرداخت:</span>
+                    <!-- چون هزینه ارسال صفر است، مبلغ قابل پرداخت دقیقاً همان مبلغ سبد خرید است -->
+                    <span class="price">{{ cart.get_total_price_formatted }} تومان</span>
+                </div>
+                
+                <button onclick="document.getElementById('checkout-form').submit();" class="btn-checkout" style="width: 100%; border: none; cursor: pointer; margin-top: 20px;">ثبت نهایی و پرداخت</button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

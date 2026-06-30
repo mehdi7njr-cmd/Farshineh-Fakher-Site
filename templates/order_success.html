@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}سفارش ثبت شد{% endblock %}
+{% block content %}
+<div class="container" style="text-align: center; padding: 100px 0;">
+    <i class="fa-solid fa-circle-check" style="font-size: 80px; color: #4caf50; margin-bottom: 20px;"></i>
+    <h1 style="color: white; margin-bottom: 15px;">سفارش شما با موفقیت ثبت شد!</h1>
+    <p style="color: var(--color-text-gray); font-size: 18px;">شماره پیگیری سفارش شما: <span style="color: var(--color-accent-gold); font-weight: bold;">#{{ order_id }}</span></p>
+    <p style="color: var(--color-text-gray); margin-bottom: 30px;">به زودی کارشناسان ما با شما تماس خواهند گرفت.</p>
+    <a href="{% url 'shop:home' %}" style="background-color: var(--color-primary-red); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">بازگشت به فروشگاه</a>
+</div>
+{% endblock %}
+<p style="color: var(--color-text-gray); font-size: 18px;">شماره پیگیری بانکی: <span style="color: #4caf50; font-weight: bold;">{{ ref_id }}</span></p>
+<p style="color: var(--color-text-gray); font-size: 15px; margin-top: 10px;">پرداخت شده با شماره کارت: <span dir="ltr">{{ card_num }}</span></p>

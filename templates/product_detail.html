@@ -1,0 +1,462 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jformat %}
+
+{% block title %}{{ product.title }} | فرشینه فاخر{% endblock %}
+{% block meta %}
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{{ product.title }} | فرشینه فاخر">
+    <meta property="og:description" content="خرید {{ product.title }} با بهترین قیمت و ارسال سریع">
+    <meta property="og:image" content="https://farshinefakher.ir{{ product.image.url }}">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ product.title }} | فرشینه فاخر">
+    <meta name="twitter:image" content="https://farshinefakher.ir{{ product.image.url }}">
+{% endblock %}
+{% block content %}
+<div class="container mt-40" style="margin-bottom: 50px;">
+    
+    <!-- مسیر راهنما (Breadcrumb) -->
+    <div class="breadcrumb">
+        <a href="{% url 'shop:home' %}">فروشگاه</a> <i class="fa-solid fa-angle-left"></i>
+        <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a> <i class="fa-solid fa-angle-left"></i>
+        <span>{{ product.title }}</span>
+    </div>
+
+    <!-- ================= بخش بالایی (۳ ستونه) ================= -->
+    <div class="pd-main-layout">
+        
+        <!-- ================= ۱. ستون راست: عکس محصول ================= -->
+        <div class="pd-gallery">
+            <div class="pd-image-box" id="image-zoom-container">
+                <img src="{{ product.image.url }}" alt="{{ product.title }}" id="main-product-image">
+                
+                <div class="pd-image-actions">
+                    <button onclick="openModal()" title="بزرگنمایی"><i class="fa-solid fa-expand"></i></button>
+                    
+                    <!-- دکمه قلب (علاقه‌مندی‌ها) متصل به AJAX -->
+                    <button class="btn-favorite" onclick="toggleFav({{ product.id }}, this)" title="افزودن به علاقه‌مندی‌ها">
+                        {% if product.id in user_favorites %}
+                            <i class="fa-solid fa-heart" style="color: #ff4d4d;"></i>
+                        {% else %}
+                            <i class="fa-regular fa-heart"></i>
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+            {% if product.gallery.all %}
+            <div class="gallery-thumbnails mt-20">
+                <!-- عکس اصلی به عنوان اولین بندانگشتی -->
+                <img src="{{ product.image.url }}" onclick="changeMainImage(this.src)" class="thumb-img active-thumb">
+                <!-- بقیه عکس‌های گالری -->
+                {% for pic in product.gallery.all %}
+                    <img src="{{ pic.image.url }}" onclick="changeMainImage(this.src)" class="thumb-img">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- لایت باکس (مدال) برای نمایش عکس تمام‌صفحه -->
+        <div id="imageModal" class="custom-image-modal">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="modalImage">
+        </div>
+
+
+        <!-- ================= ۲. ستون وسط: اطلاعات، سایزها ================= -->
+        <div class="pd-info">
+            <h1 class="pd-title">{{ product.title }}</h1>
+            <div class="pd-brand">برند: 
+                {% if product.brand %}
+                    <a href="{{ product.brand.get_absolute_url }}">{{ product.brand.name }}</a>
+                {% else %}
+                    <!-- اگر محصول برند نداشت، اسم سایت رو مینویسه ولی لینک نمیده -->
+                    <span style="color: var(--color-accent-gold); font-weight: bold;">فرشینه فاخر (تولید اختصاصی)</span>
+                {% endif %}
+            </div>            
+            
+            <!-- بخش انتخاب ابعاد -->
+            <div class="pd-variants">
+                <h3>ابعاد</h3>
+                <div class="variant-grid">
+                    {% if product.sizes.all %}
+                        {% for size in product.sizes.all %}
+                        <label class="variant-box">
+                            <input type="radio" name="size_id" value="{{ size.id }}" 
+                                   data-original-price="{{ size.price }}" 
+                                   data-discounted-price="{{ size.get_discounted_price }}"
+                                   data-discount-percent="{{ size.discount_percent }}"
+                                   data-stock="{{ size.stock }}"
+                                   onchange="updatePriceAndStock(this)"
+                                   {% if forloop.first %}checked{% endif %}>                          
+                                   <span>{{ size.name }}</span>
+                        </label>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color: var(--text-low-emp); font-size: 13px;">این محصول دارای سایزبندی نمی‌باشد.</p>
+                    {% endif %}
+
+                    <!-- دکمه تماس برای ابعاد دلخواه -->
+                    <a href="tel:09390822332" class="variant-box" style="text-decoration: none;">
+                        <span style="border-style: dashed; color: var(--color-accent-gold); border-color: var(--color-accent-gold); background: rgba(230,184,0,0.05); display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-phone"></i> سفارش ابعاد دلخواه
+                        </span>
+                    </a>
+                </div>            
+            </div>
+
+            <!-- ویژگی‌های کوتاه بالای صفحه -->
+            <div class="pd-short-specs">
+                <ul>
+                    <li>دسته‌بندی: <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
+                    <li>کد محصول: <span>{{ product.code }}</span></li>
+                    {% for feature in product.features.all %}
+                        {% if feature.show_in_top %}
+                            <li>{{ feature.feature_key }}: <span>{{ feature.feature_value }}</span></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>        
+        </div>
+
+
+        <!-- ================= ۳. ستون چپ: باکس چسبان خرید ================= -->
+        <!-- ================= ۳. ستون چپ: باکس چسبان خرید ================= -->
+        <div class="pd-action-sidebar">
+            <div class="action-box">
+                <div class="delivery-time">
+                    <i class="fa-regular fa-clock" style="color: var(--color-primary-red); font-size: 18px;"></i> 
+                    <span>زمان آماده‌سازی ۱۵ تا ۲۰ روز کاری</span>
+                </div>
+                
+                <div class="action-divider"></div>
+
+                <!-- بررسی میکنیم که آیا محصول به طور کلی موجود (یا فعال) هست یا نه -->
+                {% if product.is_available %}
+                    
+                    <!-- نمایش قیمت -->
+                    <div class="action-price">
+                        <div class="old" id="js-old-price-box" style="display: {% if product.first_size and product.first_size.discount_percent > 0 %}flex{% else %}none{% endif %};">
+                            <span class="badge" id="js-discount-badge">{{ product.first_size.discount_percent|default:"0" }}٪</span>
+                            <del id="js-original-price">{{ product.first_size.get_price_formatted|default:"0" }}</del>
+                        </div>
+                        <div class="new" style="display: flex; align-items: baseline; gap: 5px;">
+                            <span class="num" id="js-final-price" style="font-size: 26px; font-weight: bold; color: var(--color-accent-gold);">
+                                {{ product.get_discounted_price_formatted }}
+                            </span>
+                            <span class="toman" style="color: var(--text-med-emp); font-size: 13px;">تومان</span>
+                        </div>
+                    </div>
+
+                    <!-- فرم افزودن به سبد خرید -->
+                    <form action="{% url 'shop:cart_add' product.id %}" method="POST" class="add-to-cart-form" style="margin-top: 20px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="size_id" id="hidden_size_id" value="">
+                        
+                        <!-- انتخاب تعداد -->
+                        <div class="quantity-selector">
+                            <button type="button" class="qty-btn minus">-</button>
+                            <input type="number" name="quantity" value="1" min="1" max="1" readonly>
+                            <button type="button" class="qty-btn plus">+</button>
+                        </div>
+
+                        <button type="submit" class="btn-submit-cart" id="js-submit-btn">
+                            <i class="fa-solid fa-cart-plus"></i> افزودن به سبد خرید
+                        </button>
+                    </form>   
+
+                {% else %}
+                    <!-- اگر محصول در پنل ادمین غیرفعال شده بود یا موجودی همه سایزها صفر بود -->
+                    <div class="out-of-stock-msg" style="margin-top: 15px; text-align: center; padding: 25px 15px; background: rgba(255,77,77,0.05); border: 1px solid rgba(255,77,77,0.2); border-radius: 12px;">
+                        <i class="fa-solid fa-ban" style="font-size: 30px; color: #ff4d4d; margin-bottom: 10px;"></i>
+                        <h3 style="color: #ff4d4d; font-size: 18px; margin-bottom: 5px;">ناموجود</h3>
+                        <p style="color: var(--text-med-emp); font-size: 13px;">متاسفانه این کالا در حال حاضر موجود نیست.</p>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <!-- ================= جدول مشخصات کامل ================= -->
+    <div class="pd-full-specs mt-40">
+        <h2 class="specs-title">مشخصات</h2>
+        <div class="specs-table">
+            {% for feature in product.features.all %}
+            <div class="spec-row">
+                <div class="spec-key">{{ feature.feature_key }}</div>
+                <div class="spec-value">{{ feature.feature_value }}</div>
+            </div>
+            {% empty %}
+            <div class="spec-row">
+                <div class="spec-value">مشخصاتی برای این محصول ثبت نشده است.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+        <!-- ================= توضیحات محصول ================= -->
+    {% if product.description %}
+    <div class="pd-description mt-40">
+        <h2 class="specs-title">معرفی محصول</h2>
+        <div class="desc-content">
+            <!-- linebreaks باعث میشه اینترهایی که تو ادمین میزنی تو سایت هم اعمال بشن -->
+            {{ product.description|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ================= نظرات کاربران ================= -->
+    <div class="pd-comments mt-40">
+        <h2 class="specs-title">نظرات کاربران</h2>
+        
+        <!-- فرم ثبت نظر -->
+        <div class="comment-form-box">
+            {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'shop:product_detail' product.id %}">
+                    {% csrf_token %}
+                    <p style="margin-bottom: 10px;">شما با نام <strong style="color: var(--color-accent-gold);">{{ user.first_name|default:user.username }}</strong> نظر خود را ثبت می‌کنید:</p>
+                    <textarea name="body" rows="4" placeholder="دیدگاه خود را درباره این فرش بنویسید..." required class="form-input"></textarea>
+                    <button type="submit" class="btn-submit-comment mt-20">ثبت دیدگاه</button>
+                </form>
+            {% else %}
+                <div style="text-align: center; padding: 20px; background: rgba(230,184,0,0.1); border-radius: 8px;">
+                    <p style="color: var(--text-pure-white); margin-bottom: 15px;">برای ثبت نظر باید وارد حساب کاربری خود شوید.</p>
+                    <a href="{% url 'shop:login' %}" style="display: inline-block; background: var(--color-accent-gold); color: #000; padding: 10px 25px; border-radius: 6px; font-weight: bold;">ورود به سایت</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- لیست نظرات -->
+        <div class="comments-list mt-40">
+            {% for comment in comments %}
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <i class="fa-solid fa-circle-user"></i>
+                        <span class="comment-author">{{ comment.user.first_name|default:"کاربر سایت" }}</span>
+                        <span class="comment-date" dir="ltr">{{ comment.created|jformat:'%Y/%m/%d' }}</span>
+                    </div>
+                    <div class="comment-body">
+                        {{ comment.body|linebreaks }}
+                    </div>
+                </div>
+            {% empty %}
+                <p style="color: var(--text-med-emp); text-align: center; padding: 20px;">هنوز هیچ نظری برای این محصول ثبت نشده است. اولین نفری باشید که نظر می‌دهد!</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ================= محصولات مرتبط ================= -->
+    {% if related_products %}
+    <section class="product-section mt-40" style="margin-bottom: 0;">
+        <div class="section-header-minimal">
+            <div class="header-title-box">
+                <span class="gold-line"></span>
+                <h2>محصولات مرتبط</h2>
+            </div>
+        </div>
+        <div class="section-body-minimal">
+            <div class="swiper productSwiper">
+                <div class="swiper-wrapper">
+                    {% for p in related_products %}
+                    <div class="swiper-slide">
+                        <div class="product-card-minimal">
+                            <div class="product-img-minimal">
+                                <a href="{{ p.get_absolute_url }}"><img src="{{ p.image.url }}" alt="{{ p.title }}"></a>
+                            </div>
+                            <div class="product-info-minimal">
+                                <h3 class="product-title-minimal"><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></h3>
+                                <div class="product-price-minimal">
+                                    <div class="new-price-box">
+                                        <span class="price">{{ p.get_discounted_price_formatted }}</span>
+                                        <span class="currency">تومان</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-button-next custom-swiper-btn-minimal"></div>
+                <div class="swiper-button-prev custom-swiper-btn-minimal"></div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+<!-- ================= کدهای جاوااسکریپت و استایل‌های اختصاصی ================= -->
+{% block scripts %}
+<style>
+    /* تنظیمات ذره‌بین روی عکس */
+    #image-zoom-container {
+        overflow: hidden;
+        cursor: zoom-in;
+        position: relative;
+        border-radius: 12px;
+        background-color: var(--bg-card);
+    }
+    #main-product-image {
+        transition: transform 0.1s ease;
+        width: 100%;
+        display: block;
+    }
+
+    /* تنظیمات مدال (لایت‌باکس تمام صفحه) */
+    .custom-image-modal {
+        display: none; position: fixed; z-index: 999999; left: 0; top: 0; width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.9); backdrop-filter: blur(8px); overflow: auto;
+    }
+    .custom-image-modal .modal-content {
+        margin: auto; display: block; max-width: 95%; max-height: 90vh;
+        margin-top: 5vh; object-fit: contain; animation: zoomIn 0.3s; border-radius: 12px;
+    }
+    .close-modal {
+        position: absolute; top: 20px; right: 40px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; transition: 0.3s;
+    }
+    .close-modal:hover { color: var(--color-accent-gold); transform: scale(1.1); }
+    @keyframes zoomIn { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
+    
+    /* دکمه‌های روی عکس محصول */
+    .pd-image-actions { position: absolute; top: 15px; right: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 10; }
+    .pd-image-actions button { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.1); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 16px; cursor: pointer; transition: 0.3s; }
+    .pd-image-actions button:hover { background: var(--color-accent-gold); color: #000; transform: scale(1.1); }
+</style>
+
+<script>
+    // ۱. راه‌اندازی اسلایدر محصولات مرتبط
+    var swipers = document.querySelectorAll('.productSwiper');
+    swipers.forEach(function(sliderParent) {
+        var nextBtn = sliderParent.querySelector('.swiper-button-next');
+        var prevBtn = sliderParent.querySelector('.swiper-button-prev');
+        new Swiper(sliderParent, {
+            slidesPerView: 1.5, spaceBetween: 10,
+            navigation: { nextEl: nextBtn, prevEl: prevBtn },
+            breakpoints: {
+                640: { slidesPerView: 2, spaceBetween: 10 },
+                768: { slidesPerView: 4, spaceBetween: 15 },
+                1024: { slidesPerView: 6, spaceBetween: 15 },
+            },
+        });
+    });
+
+    // ۲. آپدیت قیمت و کنترل موجودی
+    function updatePriceAndStock(radioElement) {
+        document.getElementById('hidden_size_id').value = radioElement.value;
+        
+        let originalPrice = Number(radioElement.getAttribute('data-original-price'));
+        let discountedPrice = Number(radioElement.getAttribute('data-discounted-price'));
+        let discountPercent = Number(radioElement.getAttribute('data-discount-percent'));
+        let stock = Number(radioElement.getAttribute('data-stock'));
+        
+        let oldPriceBox = document.getElementById('js-old-price-box');
+        let oldPriceText = document.getElementById('js-original-price');
+        let discountBadge = document.getElementById('js-discount-badge');
+        let finalPriceText = document.getElementById('js-final-price');
+
+        finalPriceText.innerText = discountedPrice.toLocaleString('en-US');
+
+        if (discountPercent > 0) {
+            oldPriceBox.style.display = 'flex';
+            oldPriceText.innerText = originalPrice.toLocaleString('en-US');
+            discountBadge.innerText = discountPercent + '٪';
+        } else {
+            oldPriceBox.style.display = 'none';
+        }
+
+        let submitBtn = document.getElementById('js-submit-btn');
+        let quantityInput = document.querySelector('input[name="quantity"]');
+
+        if(submitBtn) {
+            if (stock > 0) {
+                submitBtn.disabled = false;
+                submitBtn.style.background = 'linear-gradient(135deg, var(--color-primary-red), #5c101b)';
+                submitBtn.style.cursor = 'pointer';
+                submitBtn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> افزودن به سبد خرید';
+                if(quantityInput) {
+                    quantityInput.max = stock;
+                    if(parseInt(quantityInput.value) > stock) quantityInput.value = stock;
+                }
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.background = '#333';
+                submitBtn.style.cursor = 'not-allowed';
+                submitBtn.innerHTML = '<i class="fa-solid fa-ban"></i> ناموجود در این سایز';
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        let firstChecked = document.querySelector('input[name="size_id"]:checked');
+        if (firstChecked) updatePriceAndStock(firstChecked);
+    });
+
+    // ۳. دکمه‌های کنترل تعداد خرید
+    document.querySelector('.qty-btn.plus')?.addEventListener('click', function() {
+        let input = document.querySelector('input[name="quantity"]');
+        if (parseInt(input.value) < parseInt(input.max)) {
+            input.value = parseInt(input.value) + 1;
+        }
+    });
+
+    document.querySelector('.qty-btn.minus')?.addEventListener('click', function() {
+        let input = document.querySelector('input[name="quantity"]');
+        if (parseInt(input.value) > parseInt(input.min)) {
+            input.value = parseInt(input.value) - 1;
+        }
+    });
+
+    // ۴. افکت ذره‌بین (زوم روی عکس)
+    const container = document.getElementById('image-zoom-container');
+    const img = document.getElementById('main-product-image');
+
+    if (container && img) {
+        container.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left; 
+            const y = e.clientY - rect.top;  
+            const xPercent = (x / rect.width) * 100;
+            const yPercent = (y / rect.height) * 100;
+
+            img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+            img.style.transform = 'scale(2.2)'; // شدت زوم
+        });
+
+        container.addEventListener('mouseleave', () => {
+            img.style.transformOrigin = 'center center';
+            img.style.transform = 'scale(1)';
+        });
+    }
+
+    // ۵. مدال (باز کردن عکس تمام‌صفحه)
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+
+    function openModal() {
+        if (modal && modalImg && img) {
+            modal.style.display = "block";
+            modalImg.src = img.src;
+        }
+    }
+
+    function closeModal() {
+        if (modal) modal.style.display = "none";
+    }
+
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+    }
+        // تغییر عکس اصلی با کلیک روی گالری
+    function changeMainImage(newSrc) {
+        document.getElementById('main-product-image').src = newSrc;
+        
+        // آپدیت کردن استایل دور عکس انتخاب شده
+        let thumbs = document.querySelectorAll('.thumb-img');
+        thumbs.forEach(t => t.classList.remove('active-thumb'));
+        event.target.classList.add('active-thumb');
+    }
+</script>
+{% endblock %}

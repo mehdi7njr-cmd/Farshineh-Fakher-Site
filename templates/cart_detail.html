@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}سبد خرید | گالری فرش زیبا{% endblock %}
+
+{% block content %}
+<div class="container mt-40" style="margin-bottom: 50px;">
+    
+    <h1 style="color: var(--color-text-white); border-bottom: 2px solid var(--color-primary-red); padding-bottom: 10px; margin-bottom: 30px;">سبد خرید شما</h1>
+
+    {% if cart|length > 0 %}
+        <div class="cart-wrapper">
+            
+            <!-- سمت راست: لیست محصولات -->
+            <div class="cart-items">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>محصول</th>
+                            <th>تعداد</th>
+                            <th>قیمت واحد</th>
+                            <th>قیمت کل</th>
+                            <th>حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart %}
+                        <tr>
+                            <td class="cart-product-info">
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}">
+                                <div>
+                                    <a href="{{ item.product.get_absolute_url }}">{{ item.product.title }}</a>
+                                    <span>کد: {{ item.product.code }}</span>
+                                    {% if item.size_name %}
+                                        <span style="color: var(--color-accent-gold);">ابعاد: {{ item.size_name }}</span>
+                                    {% endif %}
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cart-qty-selector">
+                                    <a href="{% url 'shop:cart_update' item.unique_key 'decrease' %}" class="qty-btn-sm" title="کم کردن">-</a>
+                                    <span class="qty-number">{{ item.quantity }}</span>
+                                    <a href="{% url 'shop:cart_update' item.unique_key 'increase' %}" class="qty-btn-sm" title="اضافه کردن">+</a>
+                                </div>
+                            </td>
+                            <td>{{ item.price_formatted }} تومان</td>
+                            <td style="color: var(--color-accent-gold); font-weight: bold;">{{ item.total_price_formatted }} تومان</td>
+                            <td>
+                                <a href="{% url 'shop:cart_remove' item.unique_key %}" class="btn-remove-cart">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- سمت چپ: فاکتور و پرداخت -->
+            <div class="cart-summary">
+                <h3>خلاصه سفارش</h3>
+                <div class="summary-item">
+                    <span>تعداد اقلام:</span>
+                    <span>{{ cart|length }} کالا</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-item total">
+                    <span>مبلغ قابل پرداخت:</span>
+                    <span class="price">{{ cart.get_total_price_formatted }} تومان</span>
+                </div>
+                <a href="{% url 'shop:checkout' %}" class="btn-checkout">تکمیل اطلاعات ارسال</a>
+            </div>
+
+        </div>
+    {% else %}
+        <!-- اگر سبد خالی بود -->
+        <div class="empty-cart">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <h2>سبد خرید شما خالی است!</h2>
+            <p>می‌توانید برای مشاهده محصولات به صفحه اصلی برگردید.</p>
+            <a href="{% url 'shop:home' %}" class="btn-return">بازگشت به فروشگاه</a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

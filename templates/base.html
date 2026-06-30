@@ -1,0 +1,343 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}فرشینه فاخر{% endblock %}</title>
+    {% block meta %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'style.css' %}?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+</head>
+<body>
+
+    <!-- سیستم نمایش پیام‌های پاپ‌آپ (Toasts) -->
+    {% if messages %}
+    <div class="toast-container">
+        {% for message in messages %}
+            <div class="toast-message {{ message.tags }}">
+                {% if message.tags == 'error' %}
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                {% else %}
+                    <i class="fa-solid fa-circle-check"></i>
+                {% endif %}
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ================= هدر و منوها ================= -->
+    <!-- ================= هدر و منوها ================= -->
+    <header class="main-header">
+        <div class="top-notification-bar">
+            <span>🎉 ارسال رایگان برای سفارش‌های بالای ۲۰ میلیون تومان </span>
+        </div>
+
+        <div class="header-content">
+            <div class="container header-wrapper">
+                
+                <!-- لوگوی ترکیبِ عکس و متن -->
+                <div class="logo">
+                    <a href="{% url 'shop:home' %}">
+                        <img src="{% static 'logo.png' %}" alt="فرشینه فاخر" class="site-logo-img">
+                        فرشینه فاخر
+                    </a>
+                </div>
+                
+                <!-- جستجو -->
+                <div class="search-box">
+                    <form action="{% url 'shop:search' %}" method="GET" style="width: 100%; position: relative;">
+                    <input type="text" name="q" id="main-search-input" placeholder="جستجوی محصول (نام یا کد)..." required>                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+                </div>
+                
+                <!-- دکمه ورود و سبد خرید -->
+                <div class="header-actions">
+                    {% if user.is_authenticated %}
+                        <div style="font-size: 14px; display: flex; gap: 15px; align-items: center;">
+                            <a href="{% url 'shop:profile' %}" style="color: var(--text-pure-white); text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='var(--color-accent-gold)'" onmouseout="this.style.color='white'">
+                                <i class="fa-solid fa-user"></i> 
+                                {% if user.first_name or user.last_name %}
+                                    {{ user.first_name }} {{ user.last_name }}
+                                {% else %}
+                                    {{ user.username }}
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'shop:logout' %}" style="color: #ff4d4d; text-decoration: none;"><i class="fa-solid fa-power-off"></i></a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'shop:login' %}" class="btn-login">ورود | ثبت‌نام <i class="fa-solid fa-arrow-right-to-bracket"></i></a>
+                    {% endif %}
+
+                    <a href="{% url 'shop:cart_detail' %}" class="cart-icon">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-badge">{{ cart|length }}</span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- مگامنو -->
+        <nav class="bottom-nav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li class="mega-menu-wrapper">
+                        <a href="#" class="category-btn">
+                            <i class="fa-solid fa-bars"></i> دسته‌بندی محصولات
+                        </a>
+<div class="mega-menu">
+    <!-- ستون سمت راست: لیست دسته‌های اصلی -->
+    <div class="mega-sidebar">
+        <ul id="mega-menu-tabs">
+            {% for parent in parent_categories %}
+            <li class="{% if forloop.first %}active{% endif %}" data-target="pane-{{ parent.id }}">
+                <a href="{{ parent.get_absolute_url }}">{{ parent.name }} <i class="fa-solid fa-angle-left" style="float: left; font-size: 10px; margin-top: 5px; color: var(--color-primary-red);"></i></a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- محتوای سمت چپ: زیرشاخه‌های هر دسته اصلی -->
+    <div class="mega-content">
+        {% for parent in parent_categories %}
+        <div class="mega-content-pane {% if forloop.first %}active{% endif %}" id="pane-{{ parent.id }}">
+            <a href="{{ parent.get_absolute_url }}" class="view-all">مشاهده همه محصولات {{ parent.name }} <i class="fa-solid fa-angle-left"></i></a>
+            <div class="mega-grid">
+                {% for child in parent.children.all %}
+                    {% if child.is_active %}
+                    <div class="mega-col">
+                        <a href="{{ child.get_absolute_url }}" class="mega-title">
+                            <i class="fa-solid fa-angle-left"></i> {{ child.name }}
+                        </a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>                    </li>
+                    <li><a href="{% url 'shop:home' %}">صفحه اصلی</a></li>
+                    <li><a href="{% url 'shop:track_order' %}">پیگیری سفارش</a></li>
+                    {% for cat in all_categories %}
+                        {% if cat.show_in_menu %}
+                            <li><a href="{{ cat.get_absolute_url }}">{{ cat.name }}</a></li>
+                        {% endif %}
+                    {% endfor %}                
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- ================= فوتر ================= -->
+    <footer class="main-footer mt-40">
+        <div class="footer-features">
+            <div class="container features-wrapper">
+                <div class="feature-item"><i class="fa-solid fa-headset feature-icon"></i><span>پشتیبانی ۲۴ ساعته</span></div>
+                <div class="feature-item"><i class="fa-solid fa-box-open feature-icon"></i><span>۷ روز ضمانت بازگشت کالا</span></div>
+                <div class="feature-item"><i class="fa-solid fa-certificate feature-icon"></i><span>ضمانت اصالت کالا</span></div>
+            </div>
+        </div>
+        
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="{% url 'shop:complaints' %}"><i class="fa-solid fa-angle-left"></i> شکایات</a>
+                <a href="{% url 'shop:terms' %}"><i class="fa-solid fa-angle-left"></i> قوانین و مقررات</a>
+                <a href="{% url 'shop:contact' %}"><i class="fa-solid fa-angle-left"></i> تماس با ما</a>
+            </div>
+            
+                        <div class="footer-contact">
+                <h4 style="color: white; margin-bottom: 20px;">ارتباط با ما</h4>
+                <p style="color: var(--text-med-emp);">شماره تماس: <span dir="ltr">09390822332</span></p>
+                <p style="color: var(--text-med-emp);">آدرس ایمیل: mehdi7njr@gmail.com</p>
+                <div class="social-icons">
+                    <a href="https://wa.me/989390822332" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="mailto:mehdi7njr@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-enamad">
+                <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=745140&Code=yvTJ2NYH0jBxWtkHm0N3eZhHZrvFwj71'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=745140&Code=yvTJ2NYH0jBxWtkHm0N3eZhHZrvFwj71' alt='' style='cursor:pointer' code='yvTJ2NYH0jBxWtkHm0N3eZhHZrvFwj71'></a>            
+            </div>
+        </div>
+
+        <div class="container footer-about">
+            <p style="text-align: center; font-size: 13px; line-height: 2.2; color: var(--text-med-emp); border-top: 1px solid var(--border-color); padding-top: 20px;">
+                در <strong style="color: var(--color-accent-gold);">فرشینه فاخر</strong>، ما تنها فرش نمی‌فروشیم؛ بلکه هنر، اصالت و گرمای خانه‌های ایرانی را به تصویر می‌کشیم. با تکیه بر سال‌ها تجربه و تلفیق طراحی مدرن با تار و پودِ سنت، محصولاتی را خلق کرده‌ایم که شایسته سلیقه بی‌نظیر شماست. رسالت ما، ارائه بالاترین کیفیت، تضمین اصالت کالا و خلق تجربه‌ای ماندگار از یک خرید بی‌نقص است. <strong style="color: white;">زیباییِ خانه شما، افتخارِ ماست.</strong>
+            </p>
+        </div>
+    </footer>
+
+    <!-- دکمه‌های شناور -->
+     <div class="floating-actions">
+        <a href="tel:+989390822332" class="float-btn float-phone"><i class="fa-solid fa-phone-volume"></i></a>
+        <a href="https://wa.me/989390822332" target="_blank" class="float-btn float-whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+    </div>
+        <!-- ================= نوار ناوبری موبایل (App Bottom Nav) ================= -->
+    <div class="mobile-bottom-nav">
+        <!-- دکمه خانه -->
+        <a href="{% url 'shop:home' %}" class="m-nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>خانه</span>
+        </a>
+        
+        <!-- دکمه جستجو -->
+        <a href="javascript:void(0)" onclick="focusOnSearch()" class="m-nav-item">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>جستجو</span>
+        </a>
+        
+        <!-- دکمه سبد خرید (همراه با عدد سبد) -->
+        <a href="{% url 'shop:cart_detail' %}" class="m-nav-item m-cart-item">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="m-cart-badge">{{ cart|length }}</span>
+            <span>سبد خرید</span>
+        </a>
+        
+        <!-- دکمه پروفایل / ورود -->
+        {% if user.is_authenticated %}
+        <a href="{% url 'shop:profile' %}" class="m-nav-item">
+            <i class="fa-regular fa-user"></i>
+            <span>پروفایل من</span>
+        </a>
+        {% else %}
+        <a href="{% url 'shop:login' %}" class="m-nav-item">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            <span>ورود</span>
+        </a>
+        {% endif %}
+    </div>
+    <!-- اسکریپت‌ها -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script>
+        setTimeout(function() {
+            let toasts = document.querySelectorAll('.toast-message');
+            toasts.forEach(function(toast) {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            });
+        }, 4000);
+    </script>
+        <script>
+        // این تابع با زدن دکمه جستجو تو نوار موبایل اجرا میشه
+        function focusOnSearch() {
+            // صفحه رو با یه افکت نرم میبره بالاترین نقطه سایت
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // پیدا کردن کادر جستجو
+            let searchInput = document.getElementById('main-search-input');
+            
+            // با 500 میلی ثانیه تاخیر (تا صفحه برسه بالا) کادر رو انتخاب میکنه تا کیبورد باز بشه
+            setTimeout(function() {
+                searchInput.focus();
+                // یه افکت طلایی رنگ هم به دور کادر میده تا جلب توجه کنه
+                searchInput.style.borderColor = 'var(--color-accent-gold)';
+                searchInput.style.boxShadow = '0 0 10px rgba(230,184,0,0.5)';
+                
+                // بعد از ۲ ثانیه اون درخشش طلایی رو برمیداره
+                setTimeout(()=> {
+                    searchInput.style.boxShadow = 'none';
+                    searchInput.style.borderColor = 'var(--border-color)';
+                }, 2000);
+            }, 500);
+        }
+    </script>
+    <script>
+    // اسکریپت مگامنوی پیشرفته
+    document.querySelectorAll('#mega-menu-tabs li').forEach(tab => {
+        
+        // رفتار در دسکتاپ (با بردن موس تب عوض بشه)
+        tab.addEventListener('mouseenter', function() {
+            if(window.innerWidth > 768) { activateMegaTab(this); }
+        });
+
+        // رفتار در موبایل (با کلیک کردن تب عوض بشه)
+        tab.addEventListener('click', function(e) {
+            if(window.innerWidth <= 768) {
+                e.preventDefault(); 
+                activateMegaTab(this);
+            }
+        });
+    });
+
+    function activateMegaTab(element) {
+        // حذف کلاس اکتیو از همه تب‌ها و پنل‌ها
+        document.querySelectorAll('#mega-menu-tabs li').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.mega-content-pane').forEach(p => p.classList.remove('active'));
+
+        // فعال کردن تب و پنل جدید
+        element.classList.add('active');
+        const targetId = element.getAttribute('data-target');
+        document.getElementById(targetId).classList.add('active');
+    }
+</script>
+    {% block scripts %}
+    {% endblock %}
+<script>
+    // تابع لایک کردن با AJAX
+    function toggleFav(productId, btnElement) {
+        let icon = btnElement.querySelector('i');
+        
+        fetch(`/toggle-favorite/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}', // توکن امنیتی جنگو
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'login_required') {
+                window.location.href = "{% url 'shop:login' %}"; // برو صفحه لاگین
+            } else if (data.status === 'added') {
+                // قلب توپر و قرمز میشه
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+                icon.style.color = '#ff4d4d';
+                icon.style.transform = 'scale(1.2)';
+                setTimeout(() => icon.style.transform = 'scale(1)', 200);
+            } else if (data.status === 'removed') {
+                // قلب توخالی و سفید میشه
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+                icon.style.color = '';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+        // باز و بسته کردن (Toggle) منوی دسته‌بندی در موبایل
+    const categoryBtn = document.querySelector('.category-btn');
+    const megaMenu = document.querySelector('.mega-menu');
+
+    if (categoryBtn && megaMenu) {
+        categoryBtn.addEventListener('click', function(e) {
+            // فقط اگر کاربر با موبایل بود این قانون اجرا بشه
+            if(window.innerWidth <= 768) {
+                e.preventDefault(); // نذار صفحه بپره بالا
+                megaMenu.classList.toggle('mobile-menu-active');
+            }
+        });
+    }
+</script>
+
+<style>
+    /* انیمیشن نرم برای قلب */
+    .btn-favorite i {
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+    .btn-favorite:hover i {
+        transform: scale(1.1);
+    }
+</style>
+
+</body>
+</html>

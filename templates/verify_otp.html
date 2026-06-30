@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}تایید شماره موبایل{% endblock %}
+
+{% block content %}
+<div class="container mt-40" style="max-width: 400px; margin: 50px auto; text-align: center;">
+    <h2>تایید شماره موبایل</h2>
+    <p style="margin-bottom: 20px;">کد ۵ رقمی پیامک شده را وارد کنید.</p>
+    
+    <form action="{% url 'shop:verify_otp' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="otp_code" placeholder="- - - - -" 
+               required maxlength="5"
+               style="width: 100%; padding: 15px; background-color: #242424; border: 1px solid var(--border-color); color: white; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 24px; letter-spacing: 5px;">
+               
+        <button type="submit" style="width: 100%; padding: 15px; background-color: var(--color-accent-gold); color: black; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+          تایید کد 
+        </button>
+    </form>
+</div>
+{% endblock %}

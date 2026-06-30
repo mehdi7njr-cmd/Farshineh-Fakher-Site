@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}پیگیری سفارش{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box" style="max-width: 500px;">
+        <h2>پیگیری وضعیت سفارش</h2>
+        <p style="color: var(--text-med-emp); font-size: 13px; margin-bottom: 20px;">کد سفارش خود را در کادر زیر وارد کنید:</p>
+        
+        {% if error_msg %}
+            <div class="auth-error">{{ error_msg }}</div>
+        {% endif %}
+
+        <form method="GET" action="{% url 'shop:track_order' %}">
+            <div style="display: flex; gap: 10px;">
+                <input type="number" name="order_id" placeholder="مثلاً: 105" required style="margin-bottom: 0;">
+                <button type="submit" class="btn-auth" style="margin-bottom: 0; width: auto; padding: 0 30px;">پیگیری</button>
+            </div>
+        </form>
+
+        {% if order %}
+            <div style="margin-top: 30px; text-align: right; background: #242424; padding: 20px; border-radius: 8px;">
+                <p style="color: white; margin-bottom: 10px;">سفارش شماره <strong>#{{ order.id }}</strong> پیدا شد.</p>
+                <p style="color: var(--text-med-emp); font-size: 14px;">برای مشاهده جزئیات کامل و وضعیت ارسال، لطفاً روی دکمه زیر کلیک کنید.</p>
+                <a href="{% url 'shop:order_detail' order.id %}" style="display: block; text-align: center; background: var(--color-primary-red); color: white; padding: 10px; border-radius: 8px; margin-top: 15px;">مشاهده فاکتور</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
